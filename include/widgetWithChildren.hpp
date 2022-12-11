@@ -14,7 +14,7 @@ namespace squi {
 		void update() override;
 		void draw() override;
 
-		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(std::vector<Widget *> &children);
+		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(const std::vector<Widget *> &children);
 	};
 }// namespace squi
 

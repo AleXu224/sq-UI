@@ -48,6 +48,14 @@ namespace squi {
 		void markExpired() {
 			isExpired = true;
 		}
+
+		[[nodiscard]] bool isKeyExpired() const {
+			return isExpired;
+		}
+
+		[[nodiscard]] bool isKeyInitialized() const {
+			return isInitialized;
+		}
 	};
 }// namespace squi
 

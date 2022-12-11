@@ -1,7 +1,7 @@
 #include "../include/widgetWithChildren.hpp"
 
 using namespace squi;
-std::vector<std::shared_ptr<Widget>> WidgetWithChildren::childrenFromPointers(std::vector<Widget *> &children) {
+std::vector<std::shared_ptr<Widget>> WidgetWithChildren::childrenFromPointers(const std::vector<Widget *> &children) {
 	std::vector<std::shared_ptr<Widget>> ret{};
 	ret.reserve(children.size());
 

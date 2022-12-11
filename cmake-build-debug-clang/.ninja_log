@@ -1,0 +1,9 @@
+# ninja log v5
+9	67	6923175939440853	CMakeFiles/sq_UI.dir/src/margin.cpp.obj	7b45c77df5edf58b
+8	131	6923111168738398	CMakeFiles/sq_UI.dir/src/vec2.cpp.obj	1303be4e534e7de7
+4534	5976	6923193667287365	sq_UI.exe	40f04bbd4ce9bfac
+25	1161	6923193631779821	CMakeFiles/sq_UI.dir/src/widgetWithChild.cpp.obj	1b1e8b64f78a0a55
+15	1153	6923193631618664	CMakeFiles/sq_UI.dir/src/widget.cpp.obj	b8cc84ab029afda8
+5	2856	6923193648674438	CMakeFiles/sq_UI.dir/main.cpp.obj	b648483837a106f3
+10	4534	6923193665386918	CMakeFiles/sq_UI.dir/src/screen.cpp.obj	e9322843b721a43c
+19	2516	6923193645281235	CMakeFiles/sq_UI.dir/src/Widgets/box.cpp.obj	c1a11f403ad23cc7

@@ -25,39 +25,39 @@ namespace squi {
 	};
 
 	struct WidgetData {
-		// A key to the widget which you can use anywhere in your code to access its data
+		// A key to the widget which you can use anywhere in your code to access its m_data
 		std::shared_ptr<Key> key = std::make_shared<Key>();
 
 		// The size of the widget in pixels, this does not include the margin
 		// The layout size of the wiget will be margin + size
 		vec2 size{0, 0};
 
-		// The distance your widget should be offset in relation to the parent
+		// The distance your widget should be offset in relation to the m_parent
 		Margin margin{};
 
 		// The distance the content of the widget should be offset from the widget's position
 		Margin padding{};
 
-		// The axes in which this widget should match the outer size of the child
-		// The resulting size will be the size of the margin + the size of the child
+		// The axes in which this widget should match the outer size of the m_child
+		// The resulting size will be the size of the margin + the size of the m_child
 		// If expand is set to expand in one or both of the same axes as shrinkWrap
 		// then expand will take priority
 		Axis shrinkWrap = Axis::none;
 
-		// The axes in which this widget should match the inner size of the parent
-		// The resulting size will be the size of the parent - the size of the parent's padding
+		// The axes in which this widget should match the inner size of the m_parent
+		// The resulting size will be the size of the m_parent - the size of the m_parent's padding
 		// If expand is set to expand in one or both of the same axes as shrinkWrap
 		// then this will take priority
 		Axis expand = Axis::none;
 	};
 
 	class Widget {
-		WidgetData data;
-		vec2 pos{0};
-		Widget *parent = nullptr;
+		WidgetData m_data;
+		vec2 m_pos{0};
+		Widget *m_parent = nullptr;
 		static int instances;
 
-		// The ammount of children this widget will have
+		// The ammount of m_children this widget will have
 		const WidgetChildCount count;
 
 		// A hint as to what the size of the widget should be
@@ -65,16 +65,16 @@ namespace squi {
 		// size of the widget when shrinkWrap or expand is set
 		vec2 sizeHint{-1};
 
-		std::shared_ptr<Widget> child{};
-		std::vector<std::shared_ptr<Widget>> children{};
+		std::shared_ptr<Widget> m_child{};
+		std::vector<std::shared_ptr<Widget>> m_children{};
 
 	public:
-		Widget() : data(WidgetData{}), count(WidgetChildCount::none) {
+		Widget() : m_data(WidgetData{}), count(WidgetChildCount::none) {
 			++instances;
 		}
 		explicit Widget(WidgetData data, WidgetChildCount count = WidgetChildCount::none)
-			: data(std::move(data)), count(WidgetChildCount::none) {
-			this->data.key->set(this);
+			: m_data(std::move(data)), count(count) {
+			this->m_data.key->set(this);
 			++instances;
 		}
 
@@ -114,10 +114,10 @@ namespace squi {
 		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(const std::vector<Widget *> &children);
 
 		virtual void update();
-		virtual void draw() = 0;
+		virtual void draw();
 
 		virtual ~Widget() {
-			this->data.key->markExpired();
+			this->m_data.key->markExpired();
 			--instances;
 		}
 

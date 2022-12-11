@@ -13,7 +13,7 @@ using namespace squi;
 
 Screen *Screen::currentScreen = nullptr;
 
-Screen::Screen() : WidgetWithChild(WidgetData{}) {
+Screen::Screen() : Widget(WidgetData{}, WidgetChildCount::single) {
 	currentScreen = this;
 	init_glfw();
 	init_direct2d();
@@ -51,7 +51,7 @@ void Screen::init_glfw() {
 		exit(1);
 	}
 
-	glfwSetWindowSizeCallback(window, [](GLFWwindow *window, int width, int height) {
+	glfwSetWindowSizeCallback(window, [](GLFWwindow *m_window, int width, int height) {
 		D2D_SIZE_U newSize{
 			.width = static_cast<UINT32>(width),
 			.height = static_cast<UINT32>(height),
@@ -59,13 +59,13 @@ void Screen::init_glfw() {
 		Screen::getCurrentScreen()->canvas->Resize(newSize);
 		Screen::getCurrentScreen()->draw();
 	});
-	glfwSetCharCallback(window, [](GLFWwindow *window, unsigned int codepoint) {
+	glfwSetCharCallback(window, [](GLFWwindow *m_window, unsigned int codepoint) {
 		GestureDetector::g_textInput = static_cast<unsigned char>(codepoint);
 	});
-	glfwSetScrollCallback(window, [](GLFWwindow *window, double xoffset, double yoffset) {
+	glfwSetScrollCallback(window, [](GLFWwindow *m_window, double xoffset, double yoffset) {
 		GestureDetector::g_scrollDelta = vec2{static_cast<float>(xoffset), static_cast<float>(yoffset)};
 	});
-	glfwSetKeyCallback(window, [](GLFWwindow *window, int key, int scancode, int action, int mods) {
+	glfwSetKeyCallback(window, [](GLFWwindow *m_window, int key, int scancode, int action, int mods) {
 		if (!GestureDetector::g_keys.contains(key)) GestureDetector::g_keys.insert({key, {action, mods}});
 		else GestureDetector::g_keys.at(key) = {action, mods};
 	});
@@ -111,6 +111,7 @@ void Screen::draw() {
 
 	currentScreen = this;
 
+	auto child = getChild();
 	if (!child) return;
 
 	canvas->BeginDraw();

@@ -1,15 +1,15 @@
 #ifndef SQ_UI_INVISIBLEWIDGET_HPP
 #define SQ_UI_INVISIBLEWIDGET_HPP
 
-#include "widgetWithChild.hpp"
+#include "widget.hpp"
 
 namespace squi {
 	// A widget that is invisible to the layout
 	// Acts as a way to create a Widget out of other Widgets
-	// Will report the data of the child to the parent and vice versa
-	class InvisibleWidget : public WidgetWithChild {
+	// Will report the m_data of the m_child to the m_parent and vice versa
+	class InvisibleWidget : public Widget {
 	public:
-		explicit InvisibleWidget(const WidgetData& data) : WidgetWithChild(data) {}
+		explicit InvisibleWidget(const WidgetData& data) : Widget(data, WidgetChildCount::single) {}
 
 		[[nodiscard]] const vec2 &getPos() const override;
 		[[nodiscard]] const vec2 &getSize() const override;

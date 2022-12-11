@@ -1,7 +1,7 @@
 #ifndef SQ_UI_STACK_HPP
 #define SQ_UI_STACK_HPP
 
-#include "../widgetWithChildren.hpp"
+#include "../widget.hpp"
 
 namespace squi {
 	struct StackArgs {
@@ -9,7 +9,7 @@ namespace squi {
 		std::vector<Widget *> children{};
 	};
 
-	class Stack : public WidgetWithChildren {
+	class Stack : public Widget {
 	public:
 		explicit Stack(const StackArgs& args);
 

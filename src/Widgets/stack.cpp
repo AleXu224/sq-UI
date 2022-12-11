@@ -6,17 +6,18 @@
 
 using namespace squi;
 
-Stack::Stack(const StackArgs &args) : WidgetWithChildren(args.data) {
-	children = childrenFromPointers(args.children);
+Stack::Stack(const StackArgs &args) : Widget(args.data, WidgetChildCount::multiple) {
+	setChildren(args.children);
 }
 
 void Stack::update() {
 	auto parent = getParent();
 	assert(parent != nullptr);
 
-	// Goes through the children in reverse order so that the topmost widget will get updated first
+	// Goes through the m_children in reverse order so that the topmost widget will get updated first
 	// This is needed because the widgets that are behind need the information that a widget is above them
 	auto savedHitchecks = GestureDetector::g_hitCheckRects;
+	auto children = getChildren();
 	for (auto &child : std::views::reverse(children)) {
 		child->setParent(parent);
 		child->update();
@@ -27,6 +28,8 @@ void Stack::update() {
 
 void Stack::draw() {
 	auto pos = getPos() + getMargin().getTopLeft() + getPadding().getTopLeft();
+
+	auto children = getChildren();
 
 	for (auto &child : children) {
 		child->setPos(pos);

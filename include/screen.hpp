@@ -4,10 +4,9 @@
 #include "GLFW/glfw3.h"
 #include "d2d1.h"
 #include "widget.hpp"
-#include "widgetWithChild.hpp"
 
 namespace squi {
-	class Screen : public WidgetWithChild {
+	class Screen : public Widget {
 		static Screen *currentScreen;
 		ID2D1Factory *factory = nullptr;
 		// Time in seconds between frames

@@ -8,10 +8,10 @@ int main() {
 	using namespace squi;
 	Screen screen;
 	auto key = std::make_shared<Key>();
-	//	screen.child.reset(new Box())
+	//	screen.m_child.reset(new Box())
 
-	//	screen.child = std::make_shared<Box>(BoxArgs{
-	//		.data{
+	//	screen.m_child = std::make_shared<Box>(BoxArgs{
+	//		.m_data{
 	//			.key{key},
 	//			.size{200},
 	//			.margin{20},
@@ -26,8 +26,8 @@ int main() {
 	//		.onClick = [](GestureDetector *gd) {
 	//			printf("YOOO I GOT CLICKED");
 	//		},
-	//		.child = new Box(BoxArgs{
-	//			.data{
+	//		.m_child = new Box(BoxArgs{
+	//			.m_data{
 	//				.size{20},
 	//				.margin{10},
 	//			},
@@ -35,7 +35,7 @@ int main() {
 	//		})
 	//	});
 
-	screen.child = std::make_shared<Stack>(StackArgs{
+	screen.setChild(new Stack(StackArgs{
 		.data{
 			.size{100},
 		},
@@ -59,7 +59,7 @@ int main() {
 				},
 			}),
 		},
-	});
+	}));
 
 	screen.run();
 	return 0;

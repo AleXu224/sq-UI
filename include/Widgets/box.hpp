@@ -4,7 +4,7 @@
 #include "../border.hpp"
 #include "../color.hpp"
 #include "../gestureDetector.hpp"
-#include "../widgetWithChild.hpp"
+#include "../widget.hpp"
 
 namespace squi {
 	struct BoxArgs {
@@ -21,7 +21,7 @@ namespace squi {
 		Widget *child = nullptr;
 	};
 
-	class Box : public WidgetWithChild {
+	class Box : public Widget {
 		bool shouldUpdateGd;
 	public:
 		Color color;

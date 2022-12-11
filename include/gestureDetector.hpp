@@ -21,7 +21,7 @@ namespace squi {
 		vec2 scrollDelta{0};
 		vec2 dragStart{0};
 	public:
-		// The key to the parent widget
+		// The key to the m_parent widget
 		std::shared_ptr<Key> key;
 
 		static std::unordered_map<int, KeyState> g_keys;

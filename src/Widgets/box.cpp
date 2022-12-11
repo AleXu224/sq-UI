@@ -5,11 +5,11 @@
 
 using namespace squi;
 
-Box::Box(const BoxArgs &args) : WidgetWithChild(args.data) {
+Box::Box(const BoxArgs &args) : Widget(args.data, WidgetChildCount::single) {
 	borderRadius = args.borderRadius;
 	color = args.color;
 	border = args.border;
-	child.reset(args.child);
+	setChild(args.child);
 	shouldUpdateGd = args.shouldUpdateGestureDetector;
 	gd.onClick = args.onClick;
 	gd.onEnter = args.onEnter;
@@ -18,7 +18,7 @@ Box::Box(const BoxArgs &args) : WidgetWithChild(args.data) {
 }
 
 void Box::update() {
-	WidgetWithChild::update();
+	Widget::update();
 
 	if (shouldUpdateGd) gd.update();
 }
@@ -50,6 +50,8 @@ void Box::draw() {
 		borderBrush->Release();
 	}
 	brush->Release();
+
+	auto child = getChild();
 
 	if (!child) return;
 	child->setPos(pos + getPadding().getTopLeft());

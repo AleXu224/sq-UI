@@ -1,3 +1,0 @@
-C:/Users/Squizell/Desktop/cpp/sq-UI/cmake-build-debug/CMakeFiles/sq_UI.dir
-C:/Users/Squizell/Desktop/cpp/sq-UI/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Squizell/Desktop/cpp/sq-UI/cmake-build-debug/CMakeFiles/rebuild_cache.dir

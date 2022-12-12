@@ -11,7 +11,7 @@ Rect Rect::fromPosSize(const vec2 &pos, const vec2 &size) {
 }
 
 bool Rect::contains(const vec2 &pos) const {
-	if (pos.x >= left && pos.x <= right && pos.y >= top && pos.y <= bottom) return true;
+	if (pos.x >= left && pos.x < right && pos.y >= top && pos.y < bottom) return true;
 	return false;
 }
 

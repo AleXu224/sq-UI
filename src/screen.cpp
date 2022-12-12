@@ -8,6 +8,7 @@
 #include "d2d1.h"
 #include "dwmapi.h"
 #include "format"
+#include "ranges"
 
 using namespace squi;
 
@@ -33,6 +34,8 @@ void Screen::run() {
 		glfwPollEvents();
 
 		draw();
+
+		GestureDetector::g_keys.clear();
 	}
 }
 
@@ -117,11 +120,34 @@ void Screen::draw() {
 	canvas->BeginDraw();
 	canvas->Clear(Color{0});
 
-	// TODO: hitCheck
+	overlays.erase(std::remove_if(overlays.begin(), overlays.end(), [](const std::shared_ptr<Overlay> &overlay) {
+		return (overlay->shouldClose && overlay->canClose);
+	}), overlays.end());
+
+	auto &hitcheckRects = GestureDetector::g_hitCheckRects;
+
+	for (auto &overlay: std::views::reverse(overlays)) {
+		overlay->setParent(this);
+		overlay->update();
+
+		auto overlayHitcheckRects = overlay->getHitcheckRects();
+		hitcheckRects.insert(hitcheckRects.end(), overlayHitcheckRects.begin(), overlayHitcheckRects.end());
+	}
+
 	child->setParent(this);
 	child->update();
+	hitcheckRects.clear();
+
+	for (auto &overlay : overlays) {
+		overlay->draw();
+	}
+
 	child->setPos(getMargin().getTopLeft() + getPadding().getTopLeft());
 	child->draw();
 
 	canvas->EndDraw();
+}
+
+void Screen::addOverlay(Overlay *o) {
+	overlays.push_back(std::shared_ptr<Overlay>(o));
 }

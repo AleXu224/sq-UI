@@ -34,12 +34,6 @@ Widget *InvisibleWidget::getParent() const {
 	return child->getParent();
 }
 
-const std::shared_ptr<Key> &InvisibleWidget::getKey() const {
-	auto child = getChild();
-	assert(child != nullptr);
-	return child->getKey();
-}
-
 vec2 InvisibleWidget::getContentSize() const {
 	auto child = getChild();
 	assert(child != nullptr);
@@ -101,11 +95,18 @@ void InvisibleWidget::setParent(Widget *p) {
 }
 
 void InvisibleWidget::update() {
-	Widget::update();
+	auto child = getChild();
+	auto parent = getParent();
+	if (!child || !parent) return;
+	child->setParent(parent);
+	child->update();
 }
 
 void InvisibleWidget::draw() {
-	Widget::draw();
+	auto child = getChild();
+	if (!child) return;
+	child->setPos(getPos());
+	child->draw();
 }
 
 const vec2 &InvisibleWidget::getSizeHint() const {
@@ -118,4 +119,10 @@ void InvisibleWidget::setSizeHint(const vec2 &s) {
 	auto child = getChild();
 	assert(child != nullptr);
 	child->setSizeHint(s);
+}
+
+std::vector<Rect> InvisibleWidget::getHitcheckRects() const {
+	auto child = getChild();
+	assert(child != nullptr);
+	return child->getHitcheckRects();
 }

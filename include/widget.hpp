@@ -70,6 +70,7 @@ namespace squi {
 
 	public:
 		Widget() : m_data(WidgetData{}), count(WidgetChildCount::none) {
+			this->m_data.key->set(this);
 			++instances;
 		}
 		explicit Widget(WidgetData data, WidgetChildCount count = WidgetChildCount::none)
@@ -89,7 +90,9 @@ namespace squi {
 		[[nodiscard]] virtual const vec2 &getSizeHint() const;
 		[[nodiscard]] const std::shared_ptr<Widget> &getChild() const;
 		[[nodiscard]] std::vector<std::shared_ptr<Widget>> getChildren() const;
-		[[nodiscard]] const WidgetChildCount& getChildCountType() const;
+		[[nodiscard]] const Axis &getShrinkWrap() const;
+		[[nodiscard]] const Axis &getExpand() const;
+		[[nodiscard]] const WidgetChildCount &getChildCountType() const;
 
 		[[nodiscard]] virtual const std::shared_ptr<Key> &getKey() const;
 
@@ -100,6 +103,8 @@ namespace squi {
 		[[nodiscard]] virtual Rect getContentRect() const;
 		[[nodiscard]] virtual Rect getLayoutRect() const;
 
+		[[nodiscard]] virtual std::vector<Rect> getHitcheckRects() const;
+
 		virtual void setPos(const vec2 &p);
 		virtual void setSize(const vec2 &v);
 		virtual void setMargin(const Margin &m);
@@ -108,7 +113,7 @@ namespace squi {
 		virtual void setSizeHint(const vec2 &s);
 		void setChild(Widget *c);
 		void setChild(std::shared_ptr<Widget> c);
-		void setChildren(const std::vector<Widget *>& c);
+		void setChildren(const std::vector<Widget *> &c);
 		void setChildren(std::vector<std::shared_ptr<Widget>> c);
 
 		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(const std::vector<Widget *> &children);
@@ -121,11 +126,11 @@ namespace squi {
 			--instances;
 		}
 
+		void getHintedSize();
 	private:
 		// Helper functions
 		void shrinkWrapWidget();
 		void expandWidget();
-		void getHintedSize();
 	};
 }// namespace squi
 

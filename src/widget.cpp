@@ -14,7 +14,7 @@ const Margin &Widget::getMargin() const {
 }
 
 const Margin &Widget::getPadding() const {
-	return m_data.margin;
+	return m_data.padding;
 }
 
 void Widget::setSize(const vec2 &v) {
@@ -128,19 +128,21 @@ void Widget::setChildren(std::vector<std::shared_ptr<Widget>> c) {
 }
 
 void Widget::shrinkWrapWidget() {
+	auto padding = getPadding().getHorizontalVectical();
 	if (m_data.shrinkWrap == Axis::horizontal || m_data.shrinkWrap == Axis::both)
-		m_data.size.x = m_child->getLayoutSize().x + getPadding().getHorizontalVectical().x;
+		m_data.size.x = m_child->getLayoutSize().x + padding.x;
 
 	if (m_data.shrinkWrap == Axis::vertical || m_data.shrinkWrap == Axis::both)
-		m_data.size.y = m_child->getLayoutSize().y + getPadding().getHorizontalVectical().y;
+		m_data.size.y = m_child->getLayoutSize().y + padding.y;
 }
 
 void Widget::expandWidget() {
+	auto margin = getMargin().getHorizontalVectical();
 	if (m_data.expand == Axis::horizontal || m_data.expand == Axis::both)
-		m_data.size.x = m_parent->getContentSize().x;
+		m_data.size.x = m_parent->getContentSize().x - margin.x;
 
 	if (m_data.expand == Axis::vertical || m_data.expand == Axis::both)
-		m_data.size.y = m_parent->getContentSize().y;
+		m_data.size.y = m_parent->getContentSize().y - margin.y;
 }
 
 void Widget::getHintedSize() {
@@ -208,4 +210,23 @@ void Widget::draw() { // NOLINT(misc-no-recursion)
 			return;
 		}
 	}
+}
+
+std::vector<Rect> Widget::getHitcheckRects() const {
+	switch (count) {
+		case WidgetChildCount::none: {
+			return {};
+		}
+		default: {
+			return {getRect()};
+		}
+	}
+}
+
+const Axis &Widget::getShrinkWrap() const {
+	return m_data.shrinkWrap;
+}
+
+const Axis &Widget::getExpand() const {
+	return m_data.expand;
 }

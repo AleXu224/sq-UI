@@ -6,7 +6,7 @@
 namespace squi {
 	// A widget that is invisible to the layout
 	// Acts as a way to create a Widget out of other Widgets
-	// Will report the m_data of the m_child to the m_parent and vice versa
+	// Will report the data of the child to the parent and vice versa
 	class InvisibleWidget : public Widget {
 	public:
 		explicit InvisibleWidget(const WidgetData& data) : Widget(data, WidgetChildCount::single) {}
@@ -17,8 +17,6 @@ namespace squi {
 		[[nodiscard]] const Margin &getPadding() const override;
 		[[nodiscard]] Widget *getParent() const override;
 		[[nodiscard]] const vec2 &getSizeHint() const override;
-
-		[[nodiscard]] const std::shared_ptr<Key> &getKey() const override;
 
 		[[nodiscard]] vec2 getContentSize() const override;
 		[[nodiscard]] vec2 getLayoutSize() const override;
@@ -33,6 +31,8 @@ namespace squi {
 		void setPadding(const Margin &m) override;
 		void setParent(Widget *p) override;
 		void setSizeHint(const vec2 &s) override;
+
+		std::vector<Rect> getHitcheckRects() const override;
 
 		void update() override;
 

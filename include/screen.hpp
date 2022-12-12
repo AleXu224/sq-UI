@@ -4,11 +4,18 @@
 #include "GLFW/glfw3.h"
 #include "d2d1.h"
 #include "widget.hpp"
+#include "Widgets/performanceOverlay.hpp"
+#include "overlay.hpp"
 
 namespace squi {
 	class Screen : public Widget {
 		static Screen *currentScreen;
 		ID2D1Factory *factory = nullptr;
+
+		std::vector<std::shared_ptr<Overlay>> overlays{
+			std::shared_ptr<Overlay>(new PerformanceOverlay),
+		};
+
 		// Time in seconds between frames
 		double deltaTime = 1;
 
@@ -24,6 +31,8 @@ namespace squi {
 		Screen();
 
 		void run();
+
+		void addOverlay(Overlay *o);
 
 		static Screen *getCurrentScreen();
 	};

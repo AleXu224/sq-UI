@@ -1,8 +1,13 @@
 #include <memory>
 
+#include "algorithm"
+#include "include/Widgets/align.hpp"
 #include "include/Widgets/box.hpp"
+#include "include/Widgets/column.hpp"
+#include "include/Widgets/row.hpp"
 #include "include/Widgets/stack.hpp"
 #include "include/screen.hpp"
+#include "ranges"
 
 int main() {
 	using namespace squi;
@@ -35,30 +40,20 @@ int main() {
 	//		})
 	//	});
 
-	screen.setChild(new Stack(StackArgs{
+	screen.setChild(new Box(BoxArgs{
 		.data{
 			.size{100},
+			.margin{2},
+			.padding{2},
 		},
-		.children{
-			new Box(BoxArgs{
-				.data{
-					.size{50}},
-				.color{1, 1, 0},
-				.onClick = [](GestureDetector *gd) {
-					printf("Clicked 1\n");
-				},
+		.color{1, 1, 1, 0.1},
+		.child = new Align(AlignArgs{
+			.alignment{0.5},
+			.child = new Box(BoxArgs{
+				.data{.size{10}},
+				.color{1, 1, 1},
 			}),
-			new Box(BoxArgs{
-				.data{
-					.size{50},
-					.margin{25, 0, 25, 0},
-				},
-				.color{1, 0, 1},
-				.onClick = [](GestureDetector *gd) {
-					printf("Clicked 2\n");
-				},
-			}),
-		},
+		}),
 	}));
 
 	screen.run();

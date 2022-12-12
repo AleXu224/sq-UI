@@ -27,6 +27,12 @@ namespace squi {
 		void operator/=(const vec2 &v);
 		[[nodiscard]] vec2 operator/(const vec2 &v) const;
 		[[nodiscard]] vec2 operator/(const float &v) const;
+
+		vec2 &withY(const float&newY);
+		vec2 &withX(const float& newX);
+
+		vec2 withY(const float&newY) const;
+		vec2 withX(const float& newX) const;
 	};
 }// namespace squi
 

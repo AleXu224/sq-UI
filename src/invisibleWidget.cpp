@@ -4,12 +4,6 @@
 
 using namespace squi;
 
-const vec2 &InvisibleWidget::getPos() const {
-	auto child = getChild();
-	assert(child != nullptr);
-	return child->getPos();
-}
-
 const vec2 &InvisibleWidget::getSize() const {
 	auto child = getChild();
 	assert(child != nullptr);
@@ -62,12 +56,6 @@ Rect InvisibleWidget::getLayoutRect() const {
 	auto child = getChild();
 	assert(child != nullptr);
 	return child->getLayoutRect();
-}
-
-void InvisibleWidget::setPos(const vec2 &p) {
-	auto child = getChild();
-	assert(child != nullptr);
-	child->setPos(p);
 }
 
 void InvisibleWidget::setSize(const vec2 &v) {

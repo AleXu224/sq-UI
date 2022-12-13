@@ -1,6 +1,8 @@
 #ifndef SQ_UI_VEC2_HPP
 #define SQ_UI_VEC2_HPP
 
+#include "d2d1.h"
+
 namespace squi {
 
 	class vec2 {
@@ -33,6 +35,8 @@ namespace squi {
 
 		vec2 withY(const float&newY) const;
 		vec2 withX(const float& newX) const;
+
+		operator D2D_POINT_2F() const;
 	};
 }// namespace squi
 

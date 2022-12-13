@@ -69,3 +69,6 @@ vec2 vec2::withY(const float &newY) const {
 vec2 vec2::withX(const float &newX) const {
 	return vec2{newX, y};
 }
+vec2::operator D2D_POINT_2F() const {
+	return D2D1::Point2F(x, y);
+}

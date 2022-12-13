@@ -6,6 +6,7 @@
 #include "include/Widgets/column.hpp"
 #include "include/Widgets/row.hpp"
 #include "include/Widgets/stack.hpp"
+#include "include/Widgets/text.hpp"
 #include "include/screen.hpp"
 #include "ranges"
 
@@ -42,17 +43,15 @@ int main() {
 
 	screen.setChild(new Box(BoxArgs{
 		.data{
-			.size{100},
+			.size{300},
 			.margin{2},
 			.padding{2},
+			.expand = squi::Axis::both,
 		},
-		.color{1, 1, 1, 0.1},
-		.child = new Align(AlignArgs{
-			.alignment{0.5},
-			.child = new Box(BoxArgs{
-				.data{.size{10}},
-				.color{1, 1, 1},
-			}),
+		.color{0},
+		.child = new Text(TextArgs{
+			.text{"Ok lol nkcjkasnc ncnas cjkasc sjkcns jncs cnasjkcs jcnas csajknc asjnc ask"},
+			.lineWrap = true,
 		}),
 	}));
 

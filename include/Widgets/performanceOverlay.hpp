@@ -8,6 +8,8 @@
 namespace squi {
 	class PerformanceOverlay : public Overlay {
 		bool shouldDraw = false;
+		std::shared_ptr<Key> fpsKey = std::make_shared<Key>();
+		double lastFpsUpdate = 0;
 	public:
 		PerformanceOverlay();
 

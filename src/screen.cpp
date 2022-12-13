@@ -18,6 +18,7 @@ Screen::Screen() : Widget(WidgetData{}, WidgetChildCount::single) {
 	currentScreen = this;
 	init_glfw();
 	init_direct2d();
+	overlays.push_back(std::shared_ptr<Overlay>(new PerformanceOverlay));
 }
 
 void Screen::run() {
@@ -25,12 +26,10 @@ void Screen::run() {
 	double lastFrameTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 		auto currentTime = glfwGetTime();
-		if (currentTime - lastTitleTime >= 0.1) {
-			deltaTime = currentTime - lastFrameTime;
-			glfwSetWindowTitle(window, std::format("FPS: {:.2f} Frame time: {:.2f}us", 1 / deltaTime, deltaTime * 1000000).c_str());
-			lastTitleTime = currentTime;
-		}
+		deltaTime = currentTime - lastFrameTime;
 		lastFrameTime = currentTime;
+
+//		glfwWaitEvents();
 		glfwPollEvents();
 
 		draw();
@@ -84,6 +83,7 @@ void Screen::init_glfw() {
 
 void Screen::init_direct2d() {
 	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
+	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown**)&textFactory);
 
 	RECT rc;
 	GetClientRect(glfwGetWin32Window(window), &rc);
@@ -98,6 +98,7 @@ void Screen::init_direct2d() {
 			D2D1_PRESENT_OPTIONS_IMMEDIATELY),
 		&canvas);
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 }
 
 Screen *Screen::getCurrentScreen() {

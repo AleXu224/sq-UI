@@ -3,6 +3,7 @@
 
 #include "GLFW/glfw3.h"
 #include "d2d1.h"
+#include "dwrite.h"
 #include "widget.hpp"
 #include "Widgets/performanceOverlay.hpp"
 #include "overlay.hpp"
@@ -10,14 +11,8 @@
 namespace squi {
 	class Screen : public Widget {
 		static Screen *currentScreen;
-		ID2D1Factory *factory = nullptr;
 
-		std::vector<std::shared_ptr<Overlay>> overlays{
-			std::shared_ptr<Overlay>(new PerformanceOverlay),
-		};
-
-		// Time in seconds between frames
-		double deltaTime = 1;
+		std::vector<std::shared_ptr<Overlay>> overlays{};
 
 		void init_glfw();
 		void init_direct2d();
@@ -28,6 +23,10 @@ namespace squi {
 	public:
 		GLFWwindow *window = nullptr;
 		ID2D1HwndRenderTarget *canvas = nullptr;
+		ID2D1Factory *factory = nullptr;
+		IDWriteFactory *textFactory = nullptr;
+		// Time in seconds between frames
+		double deltaTime = 1;
 		Screen();
 
 		void run();

@@ -3,6 +3,7 @@
 
 #include "stdexcept"
 #include "type_traits"
+#include "memory"
 
 namespace squi {
 	class Widget;

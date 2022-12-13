@@ -11,7 +11,6 @@ namespace squi {
 	public:
 		explicit InvisibleWidget(const WidgetData& data) : Widget(data, WidgetChildCount::single) {}
 
-		[[nodiscard]] const vec2 &getPos() const override;
 		[[nodiscard]] const vec2 &getSize() const override;
 		[[nodiscard]] const Margin &getMargin() const override;
 		[[nodiscard]] const Margin &getPadding() const override;
@@ -25,7 +24,6 @@ namespace squi {
 		[[nodiscard]] Rect getContentRect() const override;
 		[[nodiscard]] Rect getLayoutRect() const override;
 
-		void setPos(const vec2 &p) override;
 		void setSize(const vec2 &v) override;
 		void setMargin(const Margin &m) override;
 		void setPadding(const Margin &m) override;

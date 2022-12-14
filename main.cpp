@@ -50,7 +50,7 @@ int main() {
 		},
 		.color{0},
 		.child = new Text(TextArgs{
-			.text{"Ok lol nkcjkasnc ncnas cjkasc sjkcns jncs cnasjkcs jcnas csajknc asjnc ask"},
+			.text{"Crit Rate Characters"},
 			.lineWrap = true,
 		}),
 	}));

@@ -9,7 +9,7 @@ namespace squi {
 		WidgetData data{};
 		std::string text{};
 		float fontSize = 14;
-		std::wstring fontFamily{L"Segoe"};
+		std::wstring fontFamily{L"Verdana"};
 		Color color{1, 1, 1};
 		// Wether the text can be wrapped or not
 		// Setting this to true with the default maxWidth will match the parent's size

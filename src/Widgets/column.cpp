@@ -21,9 +21,9 @@ void Column::update() {
 		if (childExpand == Axis::vertical || childExpand == Axis::both) {
 			expandedChildren.push_back(child);
 		} else {
-			totalChildrenHeight += childSize.x;
+			totalChildrenHeight += childSize.y;
 		}
-		maxWidth = (std::max)(maxWidth, childSize.y);
+		maxWidth = (std::max)(maxWidth, childSize.x);
 	}
 
 	auto shrinkWrap = getShrinkWrap();

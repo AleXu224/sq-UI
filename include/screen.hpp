@@ -3,7 +3,7 @@
 
 #include "GLFW/glfw3.h"
 #include "d2d1.h"
-#include "dwrite.h"
+#include "dwrite_3.h"
 #include "widget.hpp"
 #include "Widgets/performanceOverlay.hpp"
 #include "overlay.hpp"
@@ -17,16 +17,20 @@ namespace squi {
 		void init_glfw();
 		void init_direct2d();
 
+		void update() override;
 		void draw() override;
-		void update() override {}
 
 	public:
 		GLFWwindow *window = nullptr;
 		ID2D1HwndRenderTarget *canvas = nullptr;
 		ID2D1Factory *factory = nullptr;
-		IDWriteFactory *textFactory = nullptr;
+		IDWriteFactory5 *textFactory = nullptr;
+		IDWriteFontSetBuilder1 *fontBuilder = nullptr;
 		// Time in seconds between frames
 		double deltaTime = 1;
+		double pollTime = 1;
+		double updateTime = 1;
+		double drawTime = 1;
 		Screen();
 
 		void run();

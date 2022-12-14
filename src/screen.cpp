@@ -6,6 +6,7 @@
 #include "GLFW/glfw3.h"
 #include "GLFW/glfw3native.h"
 #include "d2d1.h"
+#include "dwrite_3.h"
 #include "dwmapi.h"
 #include "format"
 #include "ranges"
@@ -22,17 +23,25 @@ Screen::Screen() : Widget(WidgetData{}, WidgetChildCount::single) {
 }
 
 void Screen::run() {
-	double lastTitleTime = glfwGetTime();
-	double lastFrameTime = glfwGetTime();
+	auto lastTime = std::chrono::high_resolution_clock::now();
+
 	while (!glfwWindowShouldClose(window)) {
-		auto currentTime = glfwGetTime();
-		deltaTime = currentTime - lastFrameTime;
-		lastFrameTime = currentTime;
+		auto now = std::chrono::high_resolution_clock::now();
+		deltaTime = std::chrono::duration<double>(now - lastTime).count();
+		lastTime = now;
 
 //		glfwWaitEvents();
 		glfwPollEvents();
+		auto pollPoint = std::chrono::high_resolution_clock::now();
 
+		update();
+		auto updatePoint = std::chrono::high_resolution_clock::now();
 		draw();
+		auto drawPoint = std::chrono::high_resolution_clock::now();
+
+		pollTime = std::chrono::duration<double>(pollPoint - now).count();
+		updateTime = std::chrono::duration<double>(updatePoint - pollPoint).count();
+		drawTime = std::chrono::duration<double>(drawPoint - updatePoint).count();
 
 		GestureDetector::g_keys.clear();
 	}
@@ -59,6 +68,7 @@ void Screen::init_glfw() {
 			.height = static_cast<UINT32>(height),
 		};
 		Screen::getCurrentScreen()->canvas->Resize(newSize);
+		Screen::getCurrentScreen()->update();
 		Screen::getCurrentScreen()->draw();
 	});
 	glfwSetCharCallback(window, [](GLFWwindow *m_window, unsigned int codepoint) {
@@ -84,6 +94,14 @@ void Screen::init_glfw() {
 void Screen::init_direct2d() {
 	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
 	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown**)&textFactory);
+	textFactory->CreateFontSetBuilder(&fontBuilder);
+
+	IDWriteFontFile* pFontFile;
+	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
+
+	fontBuilder->AddFontFile(pFontFile);
+	IDWriteFontSet* pFontSet;
+	fontBuilder->CreateFontSet(&pFontSet);
 
 	RECT rc;
 	GetClientRect(glfwGetWin32Window(window), &rc);
@@ -99,13 +117,19 @@ void Screen::init_direct2d() {
 		&canvas);
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+//	IDWriteRenderingParams *textRenderingParams = nullptr;
+//	textFactory->CreateCustomRenderingParams(1, 1, 2);
+//
+//	canvas->SetTextRenderingParams(textRenderingParams);
+
+//	textRenderingParams->Release();
 }
 
 Screen *Screen::getCurrentScreen() {
 	return currentScreen;
 }
 
-void Screen::draw() {
+void Screen::update() {
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
 	setSize({
@@ -122,8 +146,8 @@ void Screen::draw() {
 	canvas->Clear(Color{0});
 
 	overlays.erase(std::remove_if(overlays.begin(), overlays.end(), [](const std::shared_ptr<Overlay> &overlay) {
-		return (overlay->shouldClose && overlay->canClose);
-	}), overlays.end());
+					   return (overlay->shouldClose && overlay->canClose);
+				   }), overlays.end());
 
 	auto &hitcheckRects = GestureDetector::g_hitCheckRects;
 
@@ -138,7 +162,11 @@ void Screen::draw() {
 	child->setParent(this);
 	child->update();
 	hitcheckRects.clear();
+}
 
+void Screen::draw() {
+	auto child = getChild();
+	if (!child) return;
 	for (auto &overlay : overlays) {
 		overlay->draw();
 	}

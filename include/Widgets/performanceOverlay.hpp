@@ -9,7 +9,14 @@ namespace squi {
 	class PerformanceOverlay : public Overlay {
 		bool shouldDraw = false;
 		std::shared_ptr<Key> fpsKey = std::make_shared<Key>();
+		std::shared_ptr<Key> pollKey = std::make_shared<Key>();
+		std::shared_ptr<Key> updateKey = std::make_shared<Key>();
+		std::shared_ptr<Key> drawKey = std::make_shared<Key>();
 		double lastFpsUpdate = 0;
+		std::vector<double> fpsValues{};
+		std::vector<double> pollValues{};
+		std::vector<double> updateValues{};
+		std::vector<double> drawValues{};
 	public:
 		PerformanceOverlay();
 

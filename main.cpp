@@ -7,6 +7,7 @@
 #include "include/Widgets/row.hpp"
 #include "include/Widgets/stack.hpp"
 #include "include/Widgets/text.hpp"
+#include "include/Widgets/textInput.hpp"
 #include "include/screen.hpp"
 #include "ranges"
 
@@ -49,9 +50,20 @@ int main() {
 			.expand = squi::Axis::both,
 		},
 		.color{0},
-		.child = new Text(TextArgs{
-			.text{"Crit Rate Characters"},
-			.lineWrap = true,
+		.child = new Box(BoxArgs{
+			.data{
+				.shrinkWrap = squi::Axis::both,
+			},
+			.color{1, 0, 0},
+			.child = new TextInput(TextInputArgs{
+				.data{
+					.size{300},
+					.shrinkWrap = squi::Axis::vertical,
+				},
+				.textArgs{
+					.text{"Hello there"},
+				},
+			}),
 		}),
 	}));
 

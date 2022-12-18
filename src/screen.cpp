@@ -30,8 +30,8 @@ void Screen::run() {
 		deltaTime = std::chrono::duration<double>(now - lastTime).count();
 		lastTime = now;
 
-//		glfwWaitEvents();
-		glfwPollEvents();
+		glfwWaitEvents();
+//		glfwPollEvents();
 		auto pollPoint = std::chrono::high_resolution_clock::now();
 
 		update();
@@ -44,6 +44,7 @@ void Screen::run() {
 		drawTime = std::chrono::duration<double>(drawPoint - updatePoint).count();
 
 		GestureDetector::g_keys.clear();
+		GestureDetector::g_textInput = 0;
 	}
 }
 
@@ -96,12 +97,22 @@ void Screen::init_direct2d() {
 	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown**)&textFactory);
 	textFactory->CreateFontSetBuilder(&fontBuilder);
 
-	IDWriteFontFile* pFontFile;
-	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
+//	IDWriteFontFile* pFontFile;
+//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
+	if (AddFontResourceA("./segoe.ttf") != 0) {
+		printf("Success?");
+	} else {
+		printf("Fail :(");
+	}
+	if (AddFontResourceA("./segoe-semibold.ttf") != 0) {
+		printf("Success?");
+	} else {
+		printf("Fail :(");
+	}
 
-	fontBuilder->AddFontFile(pFontFile);
-	IDWriteFontSet* pFontSet;
-	fontBuilder->CreateFontSet(&pFontSet);
+//	fontBuilder->AddFontFile(pFontFile);
+//	IDWriteFontSet* pFontSet;
+//	fontBuilder->CreateFontSet(&pFontSet);
 
 	RECT rc;
 	GetClientRect(glfwGetWin32Window(window), &rc);
@@ -113,16 +124,17 @@ void Screen::init_direct2d() {
 			D2D1::SizeU(
 				rc.right - rc.left,
 				rc.bottom - rc.top),
-			D2D1_PRESENT_OPTIONS_IMMEDIATELY),
+			D2D1_PRESENT_OPTIONS_RETAIN_CONTENTS),
 		&canvas);
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
-//	IDWriteRenderingParams *textRenderingParams = nullptr;
-//	textFactory->CreateCustomRenderingParams(1, 1, 2);
-//
-//	canvas->SetTextRenderingParams(textRenderingParams);
 
-//	textRenderingParams->Release();
+	IDWriteRenderingParams3 *textRenderingParams = nullptr;
+	textFactory->CreateCustomRenderingParams(1, 1, 1, 1, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE1_NATURAL, DWRITE_GRID_FIT_MODE_DEFAULT, &textRenderingParams);
+//
+	canvas->SetTextRenderingParams(textRenderingParams);
+
+	textRenderingParams->Release();
 }
 
 Screen *Screen::getCurrentScreen() {

@@ -71,6 +71,9 @@ void GestureDetector::update() {
 			focusedOutside = false;
 		}
 	}
+
+	if (active) charInput = g_textInput;
+	else charInput = 0;
 }
 
 const vec2 &GestureDetector::getMousePos() const {

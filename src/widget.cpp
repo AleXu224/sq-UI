@@ -218,6 +218,7 @@ std::vector<Rect> Widget::getHitcheckRects() const {
 			return {};
 		}
 		default: {
+			if (m_data.passThrough) return {};
 			return {getRect()};
 		}
 	}
@@ -229,4 +230,16 @@ const Axis &Widget::getShrinkWrap() const {
 
 const Axis &Widget::getExpand() const {
 	return m_data.expand;
+}
+
+const bool &Widget::getPassThough() const {
+	return m_data.passThrough;
+}
+
+void Widget::setPassThrough(const bool &p) {
+	m_data.passThrough = p;
+}
+WidgetData &WidgetData::withKey(std::shared_ptr<Key> newKey) {
+	key = newKey;
+	return *this;
 }

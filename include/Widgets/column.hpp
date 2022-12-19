@@ -4,14 +4,24 @@
 #include "../widget.hpp"
 
 namespace squi {
+	enum class ColumnAlignment {
+		left,
+		center,
+		right,
+	};
+
 	struct ColumnArgs {
 		WidgetData data{};
+		ColumnAlignment alignment = ColumnAlignment::left;
+		float spaceBetween = 0;
 		std::vector<Widget *> children{};
 	};
 
 	class Column : public Widget {
+		ColumnAlignment alignment;
+		float spaceBetween;
 	public:
-		explicit Column(const ColumnArgs &args) : Widget(args.data, WidgetChildCount::multiple) {
+		explicit Column(const ColumnArgs &args) : Widget(args.data, WidgetChildCount::multiple), alignment(args.alignment), spaceBetween(args.spaceBetween) {
 			setChildren(args.children);
 		}
 

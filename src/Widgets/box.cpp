@@ -57,3 +57,7 @@ void Box::draw() {
 	child->setPos(pos + getPadding().getTopLeft());
 	child->draw();
 }
+
+const GestureDetector &Box::getGD() const {
+	return gd;
+}

@@ -23,7 +23,7 @@ namespace squi {
 		WidgetData data{};
 		std::string text{};
 		float fontSize = 14;
-		std::wstring fontFamily{L"Sans"};
+		std::string fontFamily{"Calibri"};
 		FontWeight weight = FontWeight::normal;
 		Color color{1, 1, 1};
 		// Wether the textArgs can be wrapped or not
@@ -37,7 +37,7 @@ namespace squi {
 	class Text : public Widget {
 		std::string text;
 		float fontSize;
-		std::wstring fontFamily;
+		std::string fontFamily;
 		Color color;
 		bool lineWrap;
 		float maxWidth;

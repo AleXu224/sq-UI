@@ -4,14 +4,22 @@
 #include "../widget.hpp"
 
 namespace squi {
+	enum class RowAlignment {
+		top,
+		center,
+		bottom,
+	};
+
 	struct RowArgs {
 		WidgetData data{};
+		RowAlignment alignment = RowAlignment::top;
 		std::vector<Widget *> children{};
 	};
 
 	class Row : public Widget {
+		RowAlignment alignment;
 	public:
-		explicit Row(const RowArgs &args) : Widget(args.data, WidgetChildCount::multiple) {
+		explicit Row(const RowArgs &args) : Widget(args.data, WidgetChildCount::multiple), alignment(args.alignment) {
 			setChildren(args.children);
 		}
 

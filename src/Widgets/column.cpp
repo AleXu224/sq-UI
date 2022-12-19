@@ -32,7 +32,9 @@ void Column::update() {
 	}
 	if (shrinkWrap == Axis::vertical || shrinkWrap == Axis::both) {
 		if (!expandedChildren.empty()) throw std::runtime_error("Can't shrinkWrap when there are expanded children");
-		setSize(getSize().withY(totalChildrenHeight));
+		float spaceBetweenOffset = spaceBetween * (children.size() - 1);
+		spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
+		setSize(getSize().withY(totalChildrenHeight + spaceBetweenOffset));
 	}
 
 	auto expand = getExpand();
@@ -59,10 +61,24 @@ void Column::draw() {
 
 	auto children = getChildren();
 	vec2 cursor{0};
+	auto columnWidth = getContentSize().x;
 	for (auto &child : children) {
 		if (!child) continue;
-		child->setPos(pos + cursor);
+		switch (alignment) {
+			case ColumnAlignment::left: {
+				child->setPos(pos + cursor);
+				break;
+			}
+			case ColumnAlignment::center: {
+				child->setPos((pos + cursor).withXOffset((columnWidth - child->getLayoutSize().x) / 2.f));
+				break;
+			}
+			case ColumnAlignment::right: {
+				child->setPos((pos + cursor).withXOffset(columnWidth - child->getLayoutSize().x));
+				break;
+			}
+		}
 		child->draw();
-		cursor.y += child->getLayoutSize().y;
+		cursor.y += child->getLayoutSize().y + spaceBetween;
 	}
 }

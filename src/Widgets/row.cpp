@@ -59,9 +59,23 @@ void Row::draw() {
 
 	auto children = getChildren();
 	vec2 cursor{0};
+	auto rowHeight = getContentSize().y;
 	for (auto &child : children) {
 		if (!child) continue;
-		child->setPos(pos + cursor);
+		switch (alignment) {
+			case RowAlignment::top: {
+				child->setPos(pos + cursor);
+				break;
+			}
+			case RowAlignment::center: {
+				child->setPos((pos + cursor).withYOffset((rowHeight - child->getLayoutSize().y) / 2));
+				break;
+			}
+			case RowAlignment::bottom: {
+				child->setPos((pos + cursor).withYOffset(rowHeight - child->getLayoutSize().y));
+				break;
+			}
+		}
 		child->draw();
 		cursor.x += child->getLayoutSize().x;
 	}

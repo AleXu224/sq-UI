@@ -5,9 +5,12 @@
 #include "../include/gestureDetector.hpp"
 #include "GLFW/glfw3.h"
 #include "GLFW/glfw3native.h"
+#include "VersionHelpers.h"
 #include "d2d1.h"
-#include "dwrite_3.h"
 #include "dwmapi.h"
+#include "dwrite_3.h"
+#include "assert.h"
+#include "iostream"
 #include "format"
 #include "ranges"
 
@@ -16,6 +19,25 @@ using namespace squi;
 Screen *Screen::currentScreen = nullptr;
 
 Screen::Screen() : Widget(WidgetData{}, WidgetChildCount::single) {
+	const auto system = L"kernel32.dll";
+	DWORD dummy;
+	const auto cbInfo =
+		::GetFileVersionInfoSizeExW(FILE_VER_GET_NEUTRAL, system, &dummy);
+	std::vector<char> buffer(cbInfo);
+	::GetFileVersionInfoExW(FILE_VER_GET_NEUTRAL, system, dummy,
+							buffer.size(), &buffer[0]);
+	void *p = nullptr;
+	UINT size = 0;
+	::VerQueryValueW(buffer.data(), L"\\", &p, &size);
+	assert(size >= sizeof(VS_FIXEDFILEINFO));
+	assert(p != nullptr);
+	auto pFixed = static_cast<const VS_FIXEDFILEINFO *>(p);
+
+	if (HIWORD(pFixed->dwFileVersionMS) == 10 && HIWORD(pFixed->dwFileVersionLS) >= 22000) {
+		isWin11 = true;
+		if (HIWORD(pFixed->dwFileVersionLS) >= 22523) supportsNewMica = true;
+	}
+
 	currentScreen = this;
 	init_glfw();
 	init_direct2d();
@@ -31,7 +53,7 @@ void Screen::run() {
 		lastTime = now;
 
 		glfwWaitEvents();
-//		glfwPollEvents();
+		//glfwPollEvents();
 		auto pollPoint = std::chrono::high_resolution_clock::now();
 
 		update();
@@ -80,7 +102,8 @@ void Screen::init_glfw() {
 	});
 	glfwSetKeyCallback(window, [](GLFWwindow *m_window, int key, int scancode, int action, int mods) {
 		if (!GestureDetector::g_keys.contains(key)) GestureDetector::g_keys.insert({key, {action, mods}});
-		else GestureDetector::g_keys.at(key) = {action, mods};
+		else
+			GestureDetector::g_keys.at(key) = {action, mods};
 	});
 
 	glfwMakeContextCurrent(window);
@@ -88,31 +111,32 @@ void Screen::init_glfw() {
 	HWND hwnd = glfwGetWin32Window(window);
 	int darkMode = 1;
 	int mica = 2;
-	DwmSetWindowAttribute(hwnd, 20, &darkMode, sizeof(darkMode));
-	DwmSetWindowAttribute(hwnd, 38, &mica, sizeof(mica));
+	int micaOld = 1;
+	if (isWin11) {
+		DwmSetWindowAttribute(hwnd, 20, &darkMode, sizeof(darkMode));
+		if (supportsNewMica)
+			DwmSetWindowAttribute(hwnd, 38, &mica, sizeof(mica));
+		else
+			DwmSetWindowAttribute(hwnd, 1029, &micaOld, sizeof(micaOld));
+	}
 }
 
 void Screen::init_direct2d() {
 	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
-	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown**)&textFactory);
-	textFactory->CreateFontSetBuilder(&fontBuilder);
+	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown **) &textFactory);
 
-//	IDWriteFontFile* pFontFile;
-//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
-	if (AddFontResourceA("./segoe.ttf") != 0) {
-		printf("Success?");
-	} else {
-		printf("Fail :(");
-	}
-	if (AddFontResourceA("./segoe-semibold.ttf") != 0) {
-		printf("Success?");
-	} else {
-		printf("Fail :(");
-	}
-
-//	fontBuilder->AddFontFile(pFontFile);
-//	IDWriteFontSet* pFontSet;
-//	fontBuilder->CreateFontSet(&pFontSet);
+	//	IDWriteFontFile* pFontFile;
+	//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
+//	if (AddFontResourceA("./segoe.ttf") != 0) {
+//		printf("Success?");
+//	} else {
+//		printf("Fail :(");
+//	}
+//	if (AddFontResourceA("./segoe-semibold.ttf") != 0) {
+//		printf("Success?");
+//	} else {
+//		printf("Fail :(");
+//	}
 
 	RECT rc;
 	GetClientRect(glfwGetWin32Window(window), &rc);
@@ -127,14 +151,14 @@ void Screen::init_direct2d() {
 			D2D1_PRESENT_OPTIONS_RETAIN_CONTENTS),
 		&canvas);
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
+	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
 
-	IDWriteRenderingParams3 *textRenderingParams = nullptr;
-	textFactory->CreateCustomRenderingParams(1, 1, 1, 1, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE1_NATURAL, DWRITE_GRID_FIT_MODE_DEFAULT, &textRenderingParams);
-//
-	canvas->SetTextRenderingParams(textRenderingParams);
+//	IDWriteRenderingParams *textRenderingParams = nullptr;
+//	textFactory->CreateCustomRenderingParams(1, 1, 1, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE_CLEARTYPE_NATURAL, &textRenderingParams);
+//	//
+//	canvas->SetTextRenderingParams(textRenderingParams);
 
-	textRenderingParams->Release();
+//	textRenderingParams->Release();
 }
 
 Screen *Screen::getCurrentScreen() {
@@ -154,12 +178,10 @@ void Screen::update() {
 	auto child = getChild();
 	if (!child) return;
 
-	canvas->BeginDraw();
-	canvas->Clear(Color{0});
-
 	overlays.erase(std::remove_if(overlays.begin(), overlays.end(), [](const std::shared_ptr<Overlay> &overlay) {
 					   return (overlay->shouldClose && overlay->canClose);
-				   }), overlays.end());
+				   }),
+				   overlays.end());
 
 	auto &hitcheckRects = GestureDetector::g_hitCheckRects;
 
@@ -179,7 +201,12 @@ void Screen::update() {
 void Screen::draw() {
 	auto child = getChild();
 	if (!child) return;
-	for (auto &overlay : overlays) {
+
+	canvas->BeginDraw();
+	Color clearColor{0};
+	if (!isWin11) clearColor = Color::fromRGB255(32, 32, 32);
+	canvas->Clear(clearColor);
+	for (auto &overlay: overlays) {
 		overlay->draw();
 	}
 

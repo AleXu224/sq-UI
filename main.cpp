@@ -1,6 +1,7 @@
 #include <memory>
 
 #include "algorithm"
+#include "include/Widgets/CustomButton.hpp"
 #include "include/Widgets/align.hpp"
 #include "include/Widgets/box.hpp"
 #include "include/Widgets/column.hpp"
@@ -50,19 +51,17 @@ int main() {
 			.expand = squi::Axis::both,
 		},
 		.color{0},
-		.child = new Box(BoxArgs{
+		.child = new CustomButton(CustomButtonArgs{
 			.data{
+				.padding{12, 7},
 				.shrinkWrap = squi::Axis::both,
 			},
-			.color{1, 0, 0},
-			.child = new TextInput(TextInputArgs{
-				.data{
-					.size{300},
-					.shrinkWrap = squi::Axis::vertical,
+			.onClick = []() {
+				printf("This works?\n");
 				},
-				.textArgs{
-					.text{"Hello there"},
-				},
+			.child = new Text(TextArgs{
+				.text = "CText",
+				.color{0, 0, 0, 1},
 			}),
 		}),
 	}));

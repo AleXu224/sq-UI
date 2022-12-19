@@ -5,8 +5,8 @@
 #include "GLFW/glfw3.h"
 
 #include "format"
-#include "ranges"
 #include "numeric"
+#include "ranges"
 
 using namespace squi;
 
@@ -21,44 +21,46 @@ PerformanceOverlay::PerformanceOverlay()
 		.child = new Box(BoxArgs{
 			.data{
 				.size{100},
-				.margin{16},
+				.margin{8},
 				.padding{8},
 				.shrinkWrap = Axis::both,
+				.passThrough = true,
 			},
-			.color{0, 0, 0, 0.25},
-			.borderRadius = 8,
+			.color{0, 0, 0, 0},
 			.child = new Column(ColumnArgs{
 				.data{
 					.shrinkWrap = Axis::both,
 				},
+				.alignment = ColumnAlignment::right,
+				.spaceBetween = 10.f,
 				.children{
 					new Text(TextArgs{
 						.data{
 							.key{fpsKey},
 						},
 						.text{"FPS"},
-						.fontSize = 16,
+						.fontSize = 17,
 					}),
 					new Text(TextArgs{
 						.data{
 							.key{pollKey},
 						},
 						.text{"POLL"},
-						.fontSize = 16,
+						.fontSize = 17,
 					}),
 					new Text(TextArgs{
 						.data{
 							.key{updateKey},
 						},
 						.text{"UPDATE"},
-						.fontSize = 16,
+						.fontSize = 17,
 					}),
 					new Text(TextArgs{
 						.data{
 							.key{drawKey},
 						},
 						.text{"DRAW"},
-						.fontSize = 16,
+						.fontSize = 17,
 					}),
 				},
 			}),
@@ -72,20 +74,20 @@ void PerformanceOverlay::update() {
 	}
 	if (!shouldDraw) return;
 	Screen *pScreen = Screen::getCurrentScreen();
-	fpsValues.push_back(pScreen->deltaTime);
-	if (fpsValues.size() > (unsigned long long)(1 / pScreen->deltaTime)) fpsValues.erase(fpsValues.begin());
-	pollValues.push_back(pScreen->pollTime * 1000);
-	if (pollValues.size() > fpsValues.size()) pollValues.erase(pollValues.begin());
-	updateValues.push_back(pScreen->updateTime * 1000);
-	if (updateValues.size() > fpsValues.size()) updateValues.erase(updateValues.begin());
-	drawValues.push_back(pScreen->drawTime * 1000);
-	if (drawValues.size() > fpsValues.size()) drawValues.erase(drawValues.begin());
+//	fpsValues.push_back(pScreen->deltaTime);
+//	if (fpsValues.size() > (unsigned long long) (1 / pScreen->deltaTime)) fpsValues.erase(fpsValues.begin());
+//	pollValues.push_back(pScreen->pollTime * 1000);
+//	if (pollValues.size() > fpsValues.size()) pollValues.erase(pollValues.begin());
+//	updateValues.push_back(pScreen->updateTime * 1000);
+//	if (updateValues.size() > fpsValues.size()) updateValues.erase(updateValues.begin());
+//	drawValues.push_back(pScreen->drawTime * 1000);
+//	if (drawValues.size() > fpsValues.size()) drawValues.erase(drawValues.begin());
 
 	if (glfwGetTime() - lastFpsUpdate > 0.1) {
-		fpsKey->getAs<Text>()->setText(std::format("Fps: {:.0f}", 1 / (std::reduce(fpsValues.begin(), fpsValues.end()) / (double)fpsValues.size())));
-		pollKey->getAs<Text>()->setText(std::format("Poll: {:.3f}ms", std::reduce(pollValues.begin(), pollValues.end()) / (double)pollValues.size()));
-		updateKey->getAs<Text>()->setText(std::format("Update: {:.3f}ms", std::reduce(updateValues.begin(), updateValues.end()) / (double)updateValues.size()));
-		drawKey->getAs<Text>()->setText(std::format("Draw: {:.3f}ms", std::reduce(drawValues.begin(), drawValues.end()) / (double)drawValues.size()));
+		fpsKey->getAs<Text>()->setText(std::format("Fps: {:.0f}", 1 / pScreen->deltaTime));
+		pollKey->getAs<Text>()->setText(std::format("Poll: {:.2f}ms", pScreen->pollTime * 1000));
+		updateKey->getAs<Text>()->setText(std::format("Update: {:.2f}ms", pScreen->updateTime * 1000));
+		drawKey->getAs<Text>()->setText(std::format("Draw: {:.2f}ms", pScreen->drawTime * 1000));
 		lastFpsUpdate = glfwGetTime();
 	}
 	Overlay::update();

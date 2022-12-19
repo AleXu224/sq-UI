@@ -3,13 +3,16 @@
 
 #include "GLFW/glfw3.h"
 #include "d2d1.h"
-#include "dwrite_3.h"
+#include "dwrite.h"
 #include "widget.hpp"
 #include "Widgets/performanceOverlay.hpp"
 #include "overlay.hpp"
 
 namespace squi {
 	class Screen : public Widget {
+		bool isWin11 = false;
+		bool supportsNewMica = false;
+
 		static Screen *currentScreen;
 
 		std::vector<std::shared_ptr<Overlay>> overlays{};
@@ -24,8 +27,8 @@ namespace squi {
 		GLFWwindow *window = nullptr;
 		ID2D1HwndRenderTarget *canvas = nullptr;
 		ID2D1Factory *factory = nullptr;
-		IDWriteFactory5 *textFactory = nullptr;
-		IDWriteFontSetBuilder1 *fontBuilder = nullptr;
+//		IDWriteFactory5 *textFactory = nullptr;
+		IDWriteFactory *textFactory = nullptr;
 		// Time in seconds between frames
 		double deltaTime = 1;
 		double pollTime = 1;

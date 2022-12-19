@@ -31,6 +31,8 @@ namespace squi {
 
 		explicit Box(const BoxArgs& args);
 
+		const GestureDetector &getGD() const;
+
 		void update() override;
 		void draw() override;
 	};

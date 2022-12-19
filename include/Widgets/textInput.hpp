@@ -8,6 +8,7 @@
 namespace squi {
 	struct TextInputArgs {
 		WidgetData data;
+		Color cursorColor{1, 1, 1};
 		TextArgs textArgs;
 	};
 
@@ -16,7 +17,10 @@ namespace squi {
 		int cursorPos = 0;
 		int selectStart = -1;
 		float horizontalScroll = 0;
+		Color cursorColor;
 		std::string value{};
+
+		std::shared_ptr<Text> selectText;
 	public:
 
 		explicit TextInput(const TextInputArgs &args);

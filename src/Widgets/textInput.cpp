@@ -3,8 +3,22 @@
 
 using namespace squi;
 
-TextInput::TextInput(const TextInputArgs &args) : Widget(args.data, WidgetChildCount::single) {
-	setChild(new Text(args.textArgs));
+TextInput::TextInput(const TextInputArgs &args)
+	: Widget(args.data, WidgetChildCount::single),
+	  cursorColor(args.cursorColor),
+	  selectText(std::make_shared<Text>(TextArgs{
+		  .fontSize = args.textArgs.fontSize,
+		  .fontFamily{args.textArgs.fontFamily},
+		  .weight = args.textArgs.weight,
+		  .color{args.textArgs.color},
+	  })) {
+
+	setChild(new Text(TextArgs{
+		.fontSize = args.textArgs.fontSize,
+		.fontFamily{args.textArgs.fontFamily},
+		.weight = args.textArgs.weight,
+		.color{1},
+	}));
 }
 
 void TextInput::update() {
@@ -251,8 +265,37 @@ void TextInput::draw() {
 	child->setPos(pos.withXOffset(-horizontalScroll));
 	child->draw();
 
-	ID2D1SolidColorBrush *brush = nullptr;
-	canvas->CreateSolidColorBrush(Color{0, 0, 1}, &brush);
+	if (!gd.active) {
+		canvas->PopAxisAlignedClip();
+		return;
+	}
+
+	if (selectStart != -1) {
+		int selectStartPos = (std::min)(cursorPos, selectStart);
+		int selectEndPos = (std::max)(cursorPos, selectStart);
+
+		auto leftMargin = selectText->calculateSizeFor(value.substr(0, selectStartPos)).x;
+		selectText->setText(value.substr(selectStartPos, selectEndPos - selectStartPos));
+		selectText->setParent(this);
+		selectText->update();
+
+		auto selectPos = pos.withXOffset(leftMargin - horizontalScroll);
+
+		ID2D1SolidColorBrush *brush = nullptr;
+		canvas->CreateSolidColorBrush(Color::fromRGB255(0, 120, 215), &brush);
+		canvas->FillRectangle(Rect::fromPosSize(selectPos, selectText->getSize()), brush);
+
+		selectText->setPos(selectPos);
+		selectText->draw();
+
+		brush->Release();
+	}
+
+	ID2D1SolidColorBrush *cursorBrush = nullptr;
+	canvas->CreateSolidColorBrush(cursorColor, &cursorBrush);
+
+	canvas->PopAxisAlignedClip();
+
 	float cursorXPos = child->calculateSizeFor(value.substr(0, cursorPos)).x - horizontalScroll;
 	Rect r{
 		pos.x + cursorXPos - 1,
@@ -260,8 +303,6 @@ void TextInput::draw() {
 		pos.x + cursorXPos + 1,
 		pos.y + child->getSize().y,
 	};
-	canvas->FillRectangle(r, brush);
-	brush->Release();
-
-	canvas->PopAxisAlignedClip();
+	canvas->FillRectangle(r, cursorBrush);
+	cursorBrush->Release();
 }

@@ -49,6 +49,12 @@ namespace squi {
 		// If expand is set to expand in one or both of the same axes as shrinkWrap
 		// then this will take priority
 		Axis expand = Axis::none;
+
+		// When true this widget will not be detected by hitchecks
+		// Useful when making a widget that should ignore inputs like an overlay
+		bool passThrough = false;
+
+		[[nodiscard]] WidgetData &withKey(std::shared_ptr<Key> newKey);
 	};
 
 	class Widget {
@@ -92,6 +98,7 @@ namespace squi {
 		[[nodiscard]] std::vector<std::shared_ptr<Widget>> getChildren() const;
 		[[nodiscard]] const Axis &getShrinkWrap() const;
 		[[nodiscard]] const Axis &getExpand() const;
+		[[nodiscard]] const bool &getPassThough() const;
 		[[nodiscard]] const WidgetChildCount &getChildCountType() const;
 
 		[[nodiscard]] virtual const std::shared_ptr<Key> &getKey() const;
@@ -115,6 +122,7 @@ namespace squi {
 		void setChild(std::shared_ptr<Widget> c);
 		void setChildren(const std::vector<Widget *> &c);
 		void setChildren(std::vector<std::shared_ptr<Widget>> c);
+		void setPassThrough(const bool& p);
 
 		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(const std::vector<Widget *> &children);
 

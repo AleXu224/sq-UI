@@ -239,7 +239,9 @@ const bool &Widget::getPassThough() const {
 void Widget::setPassThrough(const bool &p) {
 	m_data.passThrough = p;
 }
-WidgetData &WidgetData::withKey(std::shared_ptr<Key> newKey) {
-	key = newKey;
-	return *this;
+
+WidgetData WidgetData::withKey(std::shared_ptr<Key> newKey) const {
+	auto ret = *this;
+	ret.key = newKey;
+	return ret;
 }

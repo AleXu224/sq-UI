@@ -54,7 +54,7 @@ namespace squi {
 		// Useful when making a widget that should ignore inputs like an overlay
 		bool passThrough = false;
 
-		[[nodiscard]] WidgetData &withKey(std::shared_ptr<Key> newKey);
+		[[nodiscard]] WidgetData withKey(std::shared_ptr<Key> newKey) const;
 	};
 
 	class Widget {

@@ -67,6 +67,7 @@ void Screen::run() {
 
 		GestureDetector::g_keys.clear();
 		GestureDetector::g_textInput = 0;
+		GestureDetector::g_scrollDelta = vec2{0};
 	}
 }
 
@@ -148,7 +149,7 @@ void Screen::init_direct2d() {
 			D2D1::SizeU(
 				rc.right - rc.left,
 				rc.bottom - rc.top),
-			D2D1_PRESENT_OPTIONS_RETAIN_CONTENTS),
+			D2D1_PRESENT_OPTIONS_IMMEDIATELY),
 		&canvas);
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);

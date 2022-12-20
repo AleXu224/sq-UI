@@ -13,13 +13,15 @@ namespace squi {
 	struct RowArgs {
 		WidgetData data{};
 		RowAlignment alignment = RowAlignment::top;
+		float spaceBetween = 0;
 		std::vector<Widget *> children{};
 	};
 
 	class Row : public Widget {
 		RowAlignment alignment;
+		float spaceBetween;
 	public:
-		explicit Row(const RowArgs &args) : Widget(args.data, WidgetChildCount::multiple), alignment(args.alignment) {
+		explicit Row(const RowArgs &args) : Widget(args.data, WidgetChildCount::multiple), alignment(args.alignment), spaceBetween(args.spaceBetween) {
 			setChildren(args.children);
 		}
 

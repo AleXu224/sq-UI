@@ -206,12 +206,13 @@ void Screen::draw() {
 	Color clearColor{0};
 	if (!isWin11) clearColor = Color::fromRGB255(32, 32, 32);
 	canvas->Clear(clearColor);
-	for (auto &overlay: overlays) {
-		overlay->draw();
-	}
 
 	child->setPos(getMargin().getTopLeft() + getPadding().getTopLeft());
 	child->draw();
+
+	for (auto &overlay: overlays) {
+		overlay->draw();
+	}
 
 	canvas->EndDraw();
 }

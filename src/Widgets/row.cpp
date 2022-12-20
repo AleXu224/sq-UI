@@ -27,9 +27,11 @@ void Row::update() {
 	}
 
 	auto shrinkWrap = getShrinkWrap();
+	float spaceBetweenOffset = spaceBetween * static_cast<float>(children.size() - 1);
+	spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
 	if (shrinkWrap == Axis::horizontal || shrinkWrap == Axis::both) {
 		if (!expandedChildren.empty()) throw std::runtime_error("Can't shrinkWrap when there are expanded children");
-		setSize(getSize().withX(totalChildrenWidth));
+		setSize(getSize().withX(totalChildrenWidth + spaceBetweenOffset));
 	}
 	if (shrinkWrap == Axis::vertical || shrinkWrap == Axis::both) {
 		setSize(getSize().withY(maxHeight));
@@ -46,7 +48,7 @@ void Row::update() {
 	getHintedSize();
 
 	if (!expandedChildren.empty()) {
-		auto widthHint = (getContentSize().x - totalChildrenWidth) / static_cast<float>(expandedChildren.size());
+		auto widthHint = (getContentSize().x - spaceBetweenOffset - totalChildrenWidth) / static_cast<float>(expandedChildren.size());
 		for (auto &child: expandedChildren) {
 			child->setSizeHint({widthHint, child->getSizeHint().y});
 			child->getHintedSize();
@@ -77,6 +79,6 @@ void Row::draw() {
 			}
 		}
 		child->draw();
-		cursor.x += child->getLayoutSize().x;
+		cursor.x += child->getLayoutSize().x + spaceBetween;
 	}
 }

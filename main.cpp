@@ -45,7 +45,6 @@ int main() {
 
 	screen.setChild(new Box(BoxArgs{
 		.data{
-			.size{300},
 			.margin{2},
 			.padding{2},
 			.expand = squi::Axis::both,
@@ -58,7 +57,7 @@ int main() {
 			},
 			.onClick = []() {
 				printf("This works?\n");
-				},
+			},
 			.child = new Text(TextArgs{
 				.text = "CText",
 				.color{0, 0, 0, 1},

@@ -30,10 +30,10 @@ void Column::update() {
 	if (shrinkWrap == Axis::horizontal || shrinkWrap == Axis::both) {
 		setSize(getSize().withX(maxWidth));
 	}
+	float spaceBetweenOffset = spaceBetween * static_cast<float>(children.size() - 1);
+	spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
 	if (shrinkWrap == Axis::vertical || shrinkWrap == Axis::both) {
 		if (!expandedChildren.empty()) throw std::runtime_error("Can't shrinkWrap when there are expanded children");
-		float spaceBetweenOffset = spaceBetween * (children.size() - 1);
-		spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
 		setSize(getSize().withY(totalChildrenHeight + spaceBetweenOffset));
 	}
 
@@ -48,7 +48,7 @@ void Column::update() {
 	getHintedSize();
 
 	if (!expandedChildren.empty()) {
-		auto heightHint = (getContentSize().y - totalChildrenHeight) / static_cast<float>(expandedChildren.size());
+		auto heightHint = (getContentSize().y - spaceBetweenOffset - totalChildrenHeight) / static_cast<float>(expandedChildren.size());
 		for (auto &child: expandedChildren) {
 			child->setSizeHint({child->getSizeHint().x, heightHint});
 			child->getHintedSize();

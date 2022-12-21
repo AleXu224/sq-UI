@@ -6,6 +6,7 @@ using namespace squi;
 TextInput::TextInput(const TextInputArgs &args)
 	: Widget(args.data, WidgetChildCount::single),
 	  cursorColor(args.cursorColor),
+	  onChange(args.onChange),
 	  selectText(std::make_shared<Text>(TextArgs{
 		  .fontSize = args.textArgs.fontSize,
 		  .fontFamily{args.textArgs.fontFamily},
@@ -26,6 +27,8 @@ void TextInput::update() {
 	gd.update();
 
 	if (!gd.active) return;
+
+	auto valueCopy = value;
 
 	const auto removeSelectedRegion = [&]() {
 		int selectStartPos = (std::min)(cursorPos, selectStart);
@@ -252,7 +255,11 @@ void TextInput::update() {
 		horizontalScroll = horizontalScroll < 0 ? 0 : horizontalScroll;
 	}
 
-	child->setText(value);
+
+	if (valueCopy != value) {
+		child->setText(value);
+		onChange(value);
+	}
 }
 
 void TextInput::draw() {

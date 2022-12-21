@@ -125,7 +125,6 @@ void Screen::init_glfw() {
 void Screen::init_direct2d() {
 	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
 	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown **) &textFactory);
-
 	//	IDWriteFontFile* pFontFile;
 	//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
 //	if (AddFontResourceA("./segoe.ttf") != 0) {

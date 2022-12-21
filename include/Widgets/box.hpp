@@ -15,6 +15,7 @@ namespace squi {
 		// Wether the container should update the gesture detector of not
 		// Will be overriden to true if onEnter, onLeave or onClick is set
 		bool shouldUpdateGestureDetector = false;
+		bool shouldClipContents = false;
 		std::function<void(GestureDetector *)> onEnter{};
 		std::function<void(GestureDetector *)> onLeave{};
 		std::function<void(GestureDetector *)> onClick{};
@@ -23,6 +24,7 @@ namespace squi {
 
 	class Box : public Widget {
 		bool shouldUpdateGd;
+		bool shouldClipContents;
 	public:
 		Color color;
 		float borderRadius;
@@ -31,7 +33,7 @@ namespace squi {
 
 		explicit Box(const BoxArgs& args);
 
-		const GestureDetector &getGD() const;
+		[[nodiscard]] const GestureDetector &getGD() const;
 
 		void update() override;
 		void draw() override;

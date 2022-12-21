@@ -15,6 +15,7 @@ Box::Box(const BoxArgs &args) : Widget(args.data, WidgetChildCount::single) {
 	gd.onEnter = args.onEnter;
 	gd.onLeave = args.onLeave;
 	if (gd.onClick || gd.onEnter || gd.onLeave) shouldUpdateGd = true;
+	shouldClipContents = args.shouldClipContents;
 }
 
 void Box::update() {
@@ -28,6 +29,7 @@ void Box::draw() {
 	auto pos2 = pos + getSize();
 
 	auto &canvas = Screen::getCurrentScreen()->canvas;
+	auto &factory = Screen::getCurrentScreen()->factory;
 
 	ID2D1SolidColorBrush *brush = nullptr;
 	canvas->CreateSolidColorBrush(color, &brush);
@@ -51,11 +53,28 @@ void Box::draw() {
 	}
 	brush->Release();
 
-	auto child = getChild();
 
-	if (!child) return;
-	child->setPos(pos + getPadding().getTopLeft());
-	child->draw();
+	auto child = getChild();
+	if (child) {
+		if (shouldClipContents) {
+			if (borderRadius > 0) {
+				ID2D1RoundedRectangleGeometry *rrg = nullptr;
+				factory->CreateRoundedRectangleGeometry(D2D1::RoundedRect(getRect(), borderRadius, borderRadius), &rrg);
+
+				canvas->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), rrg), nullptr);
+				rrg->Release();
+			} else {
+				canvas->PushAxisAlignedClip(getRect(), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+			}
+		}
+		child->setPos(pos + getPadding().getTopLeft());
+		child->draw();
+		if (shouldClipContents) {
+			if (borderRadius > 0) canvas->PopLayer();
+			else canvas->PopAxisAlignedClip();
+		}
+	}
+
 }
 
 const GestureDetector &Box::getGD() const {

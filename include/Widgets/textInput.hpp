@@ -10,6 +10,7 @@ namespace squi {
 		WidgetData data;
 		Color cursorColor{1, 1, 1};
 		TextArgs textArgs;
+		std::function<void(std::string)> onChange{};
 	};
 
 	class TextInput : public Widget {
@@ -19,6 +20,8 @@ namespace squi {
 		float horizontalScroll = 0;
 		Color cursorColor;
 		std::string value{};
+
+		std::function<void(std::string)> onChange{};
 
 		std::shared_ptr<Text> selectText;
 	public:

@@ -16,18 +16,19 @@ namespace squi {
 	};
 
 	class GestureDetector {
-		vec2 cursorPos{0};
-		vec2 lastCursorPos{0};
+		static vec2 lastCursorPos;
 		vec2 scrollDelta{0};
 		vec2 dragStart{0};
 	public:
 		// The key to the m_parent widget
 		std::shared_ptr<Key> key;
 
+		static vec2 g_cursorPos;
 		static std::unordered_map<int, KeyState> g_keys;
 		static unsigned char g_textInput;
 		static vec2 g_scrollDelta;
 		static std::vector<Rect> g_hitCheckRects;
+		static vec2 g_dpi;
 
 		// Wether the cursor is directly above the widget, without a stacked widget being on top
 		bool hovered = false;

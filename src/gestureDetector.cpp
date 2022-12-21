@@ -3,10 +3,14 @@
 #include <GLFW/glfw3.h>
 
 using namespace squi;
+vec2 GestureDetector::lastCursorPos{0};
+
+vec2 GestureDetector::g_cursorPos{0};
 std::unordered_map<int, KeyState> GestureDetector::g_keys{};
 unsigned char GestureDetector::g_textInput{0};
 vec2 GestureDetector::g_scrollDelta{0};
 std::vector<Rect> GestureDetector::g_hitCheckRects{};
+vec2 GestureDetector::g_dpi{96};
 
 bool GestureDetector::isKey(int key, int action, int mods) {
 	if (!g_keys.contains(key)) return false;
@@ -23,33 +27,25 @@ bool GestureDetector::isKeyPressedOrRepeat(int key, int mods) {
 }
 
 void GestureDetector::update() {
-	double cursorX, cursorY;
 	GLFWwindow *window = Screen::getCurrentScreen()->window;
-	glfwGetCursorPos(window, &cursorX, &cursorY);
 	auto lmb = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-
-	lastCursorPos = cursorPos;
-	cursorPos = vec2{
-		static_cast<float>(cursorX),
-		static_cast<float>(cursorY),
-	};
 
 	bool cursorInsideAnotherWidget = false;
 	for (auto &widgetRect : g_hitCheckRects) {
-		if (widgetRect.contains(cursorPos)) {
+		if (widgetRect.contains(g_cursorPos)) {
 			cursorInsideAnotherWidget = true;
 			break;
 		}
 	}
 
-	if (!cursorInsideAnotherWidget && key->get()->getRect().contains(cursorPos)) {
+	if (!cursorInsideAnotherWidget && key->get()->getRect().contains(g_cursorPos)) {
 		scrollDelta = g_scrollDelta;
 
 		if (!hovered && onEnter) onEnter(this);
 		hovered = true;
 
 		if (lmb == GLFW_PRESS && !focusedOutside) {
-			if (!focused) dragStart = cursorPos;
+			if (!focused) dragStart = g_cursorPos;
 			focused = true;
 			active = true;
 		} else if (lmb == GLFW_RELEASE) {
@@ -74,14 +70,15 @@ void GestureDetector::update() {
 
 	if (active) charInput = g_textInput;
 	else charInput = 0;
+	lastCursorPos = g_cursorPos;
 }
 
 const vec2 &GestureDetector::getMousePos() const {
-	return cursorPos;
+	return g_cursorPos;
 }
 
 vec2 GestureDetector::getMouseDelta() const {
-	return cursorPos - lastCursorPos;
+	return g_cursorPos - lastCursorPos;
 }
 
 const vec2 &GestureDetector::getScroll() const {
@@ -90,7 +87,7 @@ const vec2 &GestureDetector::getScroll() const {
 
 vec2 GestureDetector::getDragOffset() const {
 	if (!focused) return vec2{0};
-	return dragStart - cursorPos;
+	return dragStart - g_cursorPos;
 }
 
 const vec2 &GestureDetector::getDragStartPos() const {

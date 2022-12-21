@@ -86,6 +86,10 @@ void Screen::init_glfw() {
 		exit(1);
 	}
 
+	glfwSetCursorPosCallback(window, [](GLFWwindow *m_window, double xpos, double ypos){
+		auto dpiScale = GestureDetector::g_dpi / vec2{96};
+		GestureDetector::g_cursorPos = vec2{xpos, ypos} / dpiScale;
+	});
 	glfwSetWindowSizeCallback(window, [](GLFWwindow *m_window, int width, int height) {
 		D2D_SIZE_U newSize{
 			.width = static_cast<UINT32>(width),
@@ -102,7 +106,8 @@ void Screen::init_glfw() {
 		GestureDetector::g_scrollDelta = vec2{static_cast<float>(xoffset), static_cast<float>(yoffset)};
 	});
 	glfwSetKeyCallback(window, [](GLFWwindow *m_window, int key, int scancode, int action, int mods) {
-		if (!GestureDetector::g_keys.contains(key)) GestureDetector::g_keys.insert({key, {action, mods}});
+		if (!GestureDetector::g_keys.contains(key))
+			GestureDetector::g_keys.insert({key, {action, mods}});
 		else
 			GestureDetector::g_keys.at(key) = {action, mods};
 	});
@@ -166,12 +171,15 @@ Screen *Screen::getCurrentScreen() {
 }
 
 void Screen::update() {
-	int width, height;
-	glfwGetWindowSize(window, &width, &height);
+	auto size = canvas->GetSize();
 	setSize({
-		static_cast<float>(width),
-		static_cast<float>(height),
+		size.width,
+		size.height,
 	});
+	float dpiX;
+	float dpiY;
+	canvas->GetDpi(&dpiX, &dpiY);
+	GestureDetector::g_dpi = vec2{dpiX, dpiY};
 
 	currentScreen = this;
 

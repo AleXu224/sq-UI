@@ -151,7 +151,7 @@ void Screen::init_direct2d() {
 			D2D1_PRESENT_OPTIONS_IMMEDIATELY),
 		&canvas);
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 
 //	IDWriteRenderingParams *textRenderingParams = nullptr;
 //	textFactory->CreateCustomRenderingParams(1, 1, 1, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE_CLEARTYPE_NATURAL, &textRenderingParams);

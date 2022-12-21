@@ -55,6 +55,12 @@ namespace squi {
 		bool passThrough = false;
 
 		[[nodiscard]] WidgetData withKey(std::shared_ptr<Key> newKey) const;
+		[[nodiscard]] WidgetData withSize(const vec2& newSize) const;
+		[[nodiscard]] WidgetData withMargin(const Margin& newMargin) const;
+		[[nodiscard]] WidgetData withPadding(const Margin& newPadding) const;
+		[[nodiscard]] WidgetData withShrinkWrap(const Axis& newShrinkWrap) const;
+		[[nodiscard]] WidgetData withExpand(const Axis& newExpand) const;
+		[[nodiscard]] WidgetData withPassThrough(const bool& newPassThrough) const;
 	};
 
 	class Widget {

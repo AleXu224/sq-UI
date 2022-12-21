@@ -17,14 +17,29 @@ void Stack::update() {
 	// Goes through the children in reverse order so that the topmost widget will get updated first
 	// This is needed because the widgets that are behind need the information that a widget is above them
 	auto savedHitchecks = GestureDetector::g_hitCheckRects;
+
+	vec2 newSize{0};
+
 	auto children = getChildren();
 	for (auto &child : std::views::reverse(children)) {
 		child->setParent(parent);
 		child->update();
+
+		// This check is required in order for expanded children to take a
+		// proper size when inside a shrinkwrap parent
+		auto childExpand = child->getExpand();
+		auto childSize = child->getLayoutSize();
+		if (childExpand == Axis::none || childExpand == Axis::vertical)
+			newSize.x = (std::max)(childSize.x, newSize.x);
+		if (childExpand == Axis::none || childExpand == Axis::horizontal)
+			newSize.y = (std::max)(childSize.y, newSize.y);
+
 		auto &hitCheckRects = GestureDetector::g_hitCheckRects;
 		auto newHitChecks = child->getHitcheckRects();
 		hitCheckRects.insert(hitCheckRects.end(), newHitChecks.begin(), newHitChecks.end());
 	}
+
+	Widget::setSize(newSize);
 	GestureDetector::g_hitCheckRects = savedHitchecks;
 }
 
@@ -37,42 +52,6 @@ void Stack::draw() {
 		child->setPos(pos);
 		child->draw();
 	}
-}
-
-const vec2 &Stack::getSize() const {
-	auto parent = getParent();
-	assert(parent != nullptr);
-	return parent->getSize();
-}
-
-const Margin &Stack::getMargin() const {
-	auto parent = getParent();
-	assert(parent != nullptr);
-	return parent->getMargin();
-}
-
-const Margin &Stack::getPadding() const {
-	auto parent = getParent();
-	assert(parent != nullptr);
-	return parent->getPadding();
-}
-
-void Stack::setSize(const vec2 &v) {
-	auto parent = getParent();
-	assert(parent != nullptr);
-	parent->setSize(v);
-}
-
-void Stack::setMargin(const Margin &m) {
-	auto parent = getParent();
-	assert(parent != nullptr);
-	parent->setMargin(m);
-}
-
-void Stack::setPadding(const Margin &m) {
-	auto parent = getParent();
-	assert(parent != nullptr);
-	parent->setPadding(m);
 }
 
 std::vector<Rect> Stack::getHitcheckRects() const {

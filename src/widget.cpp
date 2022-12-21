@@ -245,3 +245,39 @@ WidgetData WidgetData::withKey(std::shared_ptr<Key> newKey) const {
 	ret.key = newKey;
 	return ret;
 }
+
+WidgetData WidgetData::withSize(const vec2 &newSize) const {
+	auto ret = *this;
+	ret.size = newSize;
+	return ret;
+}
+
+WidgetData WidgetData::withMargin(const Margin &newMargin) const {
+	auto ret = *this;
+	ret.margin = newMargin;
+	return ret;
+}
+
+WidgetData WidgetData::withPadding(const Margin &newPadding) const {
+	auto ret = *this;
+	ret.padding = newPadding;
+	return ret;
+}
+
+WidgetData WidgetData::withShrinkWrap(const Axis &newShrinkWrap) const {
+	auto ret = *this;
+	ret.shrinkWrap = newShrinkWrap;
+	return ret;
+}
+
+WidgetData WidgetData::withExpand(const Axis &newExpand) const {
+	auto ret = *this;
+	ret.expand = newExpand;
+	return ret;
+}
+
+WidgetData WidgetData::withPassThrough(const bool &newPassThrough) const {
+	auto ret = *this;
+	ret.passThrough = newPassThrough;
+	return ret;
+}

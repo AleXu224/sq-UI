@@ -18,7 +18,7 @@ TextInput::TextInput(const TextInputArgs &args)
 		.fontSize = args.textArgs.fontSize,
 		.fontFamily{args.textArgs.fontFamily},
 		.weight = args.textArgs.weight,
-		.color{1},
+		.color{args.textArgs.color},
 	}));
 }
 
@@ -258,7 +258,7 @@ void TextInput::update() {
 
 	if (valueCopy != value) {
 		child->setText(value);
-		onChange(value);
+		if (onChange) onChange(value);
 	}
 }
 
@@ -312,4 +312,8 @@ void TextInput::draw() {
 	};
 	canvas->FillRectangle(r, cursorBrush);
 	cursorBrush->Release();
+}
+
+void TextInput::setActive() {
+	gd.active = true;
 }

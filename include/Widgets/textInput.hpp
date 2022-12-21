@@ -7,9 +7,9 @@
 
 namespace squi {
 	struct TextInputArgs {
-		WidgetData data;
+		WidgetData data{};
 		Color cursorColor{1, 1, 1};
-		TextArgs textArgs;
+		TextArgs textArgs{};
 		std::function<void(std::string)> onChange{};
 	};
 
@@ -25,8 +25,9 @@ namespace squi {
 
 		std::shared_ptr<Text> selectText;
 	public:
-
 		explicit TextInput(const TextInputArgs &args);
+
+		void setActive();
 
 		void update() override;
 		void draw() override;

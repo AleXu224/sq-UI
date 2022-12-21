@@ -13,15 +13,7 @@ namespace squi {
 	public:
 		explicit Stack(const StackArgs& args);
 
-		[[nodiscard]] const vec2 &getSize() const override;
-		[[nodiscard]] const Margin &getMargin() const override;
-		[[nodiscard]] const Margin &getPadding() const override;
-
-		void setSize(const vec2 &v) override;
-		void setMargin(const Margin &m) override;
-		void setPadding(const Margin &m) override;
-
-		std::vector<Rect> getHitcheckRects() const override;
+		[[nodiscard]] std::vector<Rect> getHitcheckRects() const override;
 
 		void update() override;
 

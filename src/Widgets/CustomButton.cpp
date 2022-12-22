@@ -2,7 +2,7 @@
 
 using namespace squi;
 
-CustomButton::CustomButton(CustomButtonArgs args) : InvisibleWidget(args.data), style(args.style) {
+CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetContentType::invisibleWithChild), style(args.style) {
 	setChild(new Box(BoxArgs{
 		.data{args.data.withKey(boxKey)},
 		.color{Color::fromHexRGB("60CDFF")},
@@ -18,7 +18,7 @@ CustomButton::CustomButton(CustomButtonArgs args) : InvisibleWidget(args.data), 
 }
 
 void CustomButton::update() {
-	InvisibleWidget::update();
+	Widget::update();
 
 	auto boxWidget = boxKey->getAs<Box>();
 	auto boxGD = boxWidget->getGD();

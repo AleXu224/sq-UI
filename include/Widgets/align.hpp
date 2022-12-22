@@ -1,7 +1,7 @@
 #ifndef SQ_UI_ALIGN_HPP
 #define SQ_UI_ALIGN_HPP
 
-#include "../invisibleWidget.hpp"
+#include "../widget.hpp"
 
 namespace squi {
 	struct AlignArgs {
@@ -10,11 +10,11 @@ namespace squi {
 		Widget *child = nullptr;
 	};
 
-	class Align : public InvisibleWidget {
+	class Align : public Widget {
 	public:
 		vec2 alignment;
 		explicit Align(const AlignArgs &args)
-			: InvisibleWidget(args.data), alignment(args.alignment) {
+			: Widget(args.data, WidgetContentType::invisibleWithChild), alignment(args.alignment) {
 			setChild(args.child);
 		}
 

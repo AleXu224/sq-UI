@@ -6,7 +6,7 @@
 
 using namespace squi;
 
-Stack::Stack(const StackArgs &args) : Widget(args.data, WidgetChildCount::multiple) {
+Stack::Stack(const StackArgs &args) : Widget(args.data, WidgetContentType::multipleChildren) {
 	setChildren(args.children);
 }
 

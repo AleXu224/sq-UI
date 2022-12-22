@@ -111,12 +111,24 @@ int main() {
 //		},
 //	}));
 
-	screen.setChild(new TextBox(TextBoxArgs{
-		.data {
-			.margin{4},
-			.expand = squi::Axis::horizontal,
+	std::shared_ptr<Key> k = std::make_shared<Key>();
+
+	screen.setChild(new CustomButton(CustomButtonArgs{
+		.data{
+			.key{k},
+			.size{100},
+		},
+		.onClick = [&](){
+			auto elem = k->getAs<CustomButton>();
+			elem->setMargin(Margin{elem->getMargin().left + 16});
 		},
 	}));
+//	screen.setChild(new TextBox(TextBoxArgs{
+//		.data {
+//			.margin{4},
+//			.expand = squi::Axis::horizontal,
+//		},
+//	}));
 
 	screen.run();
 	return 0;

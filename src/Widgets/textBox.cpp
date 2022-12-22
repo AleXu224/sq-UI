@@ -4,7 +4,7 @@
 
 using namespace squi;
 
-TextBox::TextBox(const TextBoxArgs &args) : InvisibleWidget(args.data) {
+TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
 	setChild(new Box{BoxArgs{
 		// Force shrinkwrap to be verical at the very least in order to properly fit the text
 		.data{
@@ -54,7 +54,7 @@ TextBox::TextBox(const TextBoxArgs &args) : InvisibleWidget(args.data) {
 }
 
 void TextBox::update() {
-	InvisibleWidget::update();
+	Widget::update();
 
 	auto box = boxKey->getAs<Box>();
 	auto textInput = textInputKey->getAs<TextInput>();

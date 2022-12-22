@@ -1,7 +1,7 @@
 #ifndef SQ_UI_TEXTBOX_HPP
 #define SQ_UI_TEXTBOX_HPP
 
-#include "../invisibleWidget.hpp"
+#include "../widget.hpp"
 #include "box.hpp"
 #include "textInput.hpp"
 
@@ -10,7 +10,7 @@ namespace squi {
 		WidgetData data{};
 	};
 
-	class TextBox : public InvisibleWidget {
+	class TextBox : public Widget {
 		std::shared_ptr<Key> boxKey = std::make_shared<Key>();
 		std::shared_ptr<Key> textInputKey = std::make_shared<Key>();
 		std::shared_ptr<Key> underlineKey = std::make_shared<Key>();

@@ -1,7 +1,7 @@
 #ifndef SQ_UI_CUSTOMBUTTON_HPP
 #define SQ_UI_CUSTOMBUTTON_HPP
 
-#include "../invisibleWidget.hpp"
+#include "../widget.hpp"
 #include "align.hpp"
 #include "box.hpp"
 
@@ -19,7 +19,7 @@ namespace squi {
 		Widget *child = nullptr;
 	};
 
-	class CustomButton : public InvisibleWidget {
+	class CustomButton : public Widget {
 		std::shared_ptr<Key> boxKey = std::make_shared<Key>();
 		ButtonStyle style;
 	public:

@@ -2,20 +2,19 @@
 #define SQ_UI_OVERLAY_HPP
 
 #include "Widgets/stack.hpp"
-#include "invisibleWidget.hpp"
 
 namespace squi {
 	struct OverlayArgs {
-		WidgetData data;
-		std::vector<Widget *> children;
+		WidgetData data{};
+		std::vector<Widget *> children{};
 	};
 
-	class Overlay : public InvisibleWidget {
+	class Overlay : public Widget {
 	public:
 		bool shouldClose = false;
 		bool canClose = false;
 
-		explicit Overlay(const OverlayArgs &args) : InvisibleWidget(args.data) {
+		explicit Overlay(const OverlayArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
 			setChild(new Stack(StackArgs{
 				.children{args.children},
 			}));

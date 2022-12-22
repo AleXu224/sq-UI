@@ -5,7 +5,7 @@
 
 using namespace squi;
 
-Box::Box(const BoxArgs &args) : Widget(args.data, WidgetChildCount::single) {
+Box::Box(const BoxArgs &args) : Widget(args.data, WidgetContentType::singleChild) {
 	borderRadius = args.borderRadius;
 	color = args.color;
 	border = args.border;
@@ -54,7 +54,7 @@ void Box::draw() {
 	brush->Release();
 
 
-	auto child = getChild();
+	auto &child = getChild();
 	if (child) {
 		if (shouldClipContents) {
 			if (borderRadius > 0) {

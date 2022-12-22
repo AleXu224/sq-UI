@@ -21,7 +21,7 @@ namespace squi {
 		ColumnAlignment alignment;
 		float spaceBetween;
 	public:
-		explicit Column(const ColumnArgs &args) : Widget(args.data, WidgetChildCount::multiple), alignment(args.alignment), spaceBetween(args.spaceBetween) {
+		explicit Column(const ColumnArgs &args) : Widget(args.data, WidgetContentType::multipleChildren), alignment(args.alignment), spaceBetween(args.spaceBetween) {
 			setChildren(args.children);
 		}
 

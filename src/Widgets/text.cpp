@@ -10,7 +10,7 @@
 using namespace squi;
 
 Text::Text(const TextArgs &args)
-	: Widget(args.data, WidgetChildCount::none),
+	: Widget(args.data, WidgetContentType::none),
 	  text(args.text),
 	  fontSize(args.fontSize),
 	  fontFamily(args.fontFamily),

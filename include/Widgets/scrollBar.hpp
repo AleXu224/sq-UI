@@ -2,7 +2,7 @@
 #define SQ_UI_SCROLLBAR_HPP
 
 #include "../color.hpp"
-#include "../invisibleWidget.hpp"
+#include "../widget.hpp"
 
 namespace squi {
 	struct ScrollbarArgs {
@@ -10,7 +10,7 @@ namespace squi {
 		std::shared_ptr<Key> scrollableKey;
 	};
 
-	class ScrollBar : public InvisibleWidget {
+	class ScrollBar : public Widget {
 		std::shared_ptr<Key> scrollableKey = std::make_shared<Key>();
 		std::shared_ptr<Key> bgKey = std::make_shared<Key>();
 		std::shared_ptr<Key> thumbKey = std::make_shared<Key>();

@@ -5,28 +5,50 @@ using namespace squi;
 
 int Widget::instances = 0;
 
+WidgetData &Widget::getData() {
+	if (contentType == WidgetContentType::invisibleWithChild) {
+		if (auto child = getChild())
+			return child->getData();
+		else
+			return m_data;
+	} else {
+		return m_data;
+	}
+}
+
+const WidgetData &Widget::getData() const {
+	if (contentType == WidgetContentType::invisibleWithChild) {
+		if (auto child = getChild())
+			return child->getData();
+		else
+			return m_data;
+	} else {
+		return m_data;
+	}
+}
+
 const vec2 &Widget::getSize() const {
-	return m_data.size;
+	return getData().size;
 }
 
 const Margin &Widget::getMargin() const {
-	return m_data.margin;
+	return getData().margin;
 }
 
 const Margin &Widget::getPadding() const {
-	return m_data.padding;
+	return getData().padding;
 }
 
 void Widget::setSize(const vec2 &v) {
-	m_data.size = v;
+	getData().size = v;
 }
 
 void Widget::setMargin(const Margin &m) {
-	m_data.margin = m;
+	getData().margin = m;
 }
 
 void Widget::setPadding(const Margin &m) {
-	m_data.padding = m;
+	getData().padding = m;
 }
 
 const vec2 &Widget::getPos() const {
@@ -77,87 +99,99 @@ void Widget::setSizeHint(const vec2 &s) {
 	sizeHint = s;
 }
 
+std::shared_ptr<Widget> &Widget::getChild() {
+	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild) throw std::runtime_error("Child is not of singleChild contentType");
+	return m_child;
+}
+
 const std::shared_ptr<Widget> &Widget::getChild() const {
-	if (count != WidgetChildCount::single) throw std::runtime_error("Child is not of single count");
+	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild) throw std::runtime_error("Child is not of singleChild contentType");
 	return m_child;
 }
 
 std::vector<std::shared_ptr<Widget>> Widget::getChildren() const {
-	if (count != WidgetChildCount::multiple) throw std::runtime_error("Child is not of multiple count");
+	if (contentType != WidgetContentType::multipleChildren) throw std::runtime_error("Child is not of multipleChildren contentType");
 
 	return m_children;
 }
 
-const WidgetChildCount &Widget::getChildCountType() const {
-	return count;
+const WidgetContentType &Widget::getChildCountType() const {
+	return contentType;
 }
 
 void Widget::setChild(Widget *c) {
-	if (count != WidgetChildCount::single) throw std::runtime_error("Child is not of single count");
+	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
+		throw std::runtime_error("Child is not of singleChild contentType");
 
-	m_child.reset(c);
+	auto &child = getChild();
+	child.reset(c);
+	if (contentType == WidgetContentType::invisibleWithChild && child)
+		child->overrideData(m_data);
 }
 
 void Widget::setChild(std::shared_ptr<Widget> c) {
-	if (count != WidgetChildCount::single) throw std::runtime_error("Child is not of single count");
+	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
+		throw std::runtime_error("Child is not of singleChild contentType");
 
 	m_child = std::move(c);
+	if (contentType == WidgetContentType::invisibleWithChild)
+		m_child->overrideData(m_data);
 }
 
 std::vector<std::shared_ptr<Widget>> Widget::childrenFromPointers(const std::vector<Widget *> &children) {
 	std::vector<std::shared_ptr<Widget>> ret{};
 	ret.reserve(children.size());
 
-	for (auto *child : children) {
+	for (auto *child: children) {
 		ret.push_back(std::shared_ptr<Widget>(child));
 	}
 
 	return ret;
 }
 
-void Widget::setChildren(const std::vector<Widget *>& c) {
-	if (count != WidgetChildCount::multiple) throw std::runtime_error("Child is not of multiple count");
+void Widget::setChildren(const std::vector<Widget *> &c) {
+	if (contentType != WidgetContentType::multipleChildren) throw std::runtime_error("Child is not of multipleChildren contentType");
 
 	m_children = childrenFromPointers(c);
 }
 
 void Widget::setChildren(std::vector<std::shared_ptr<Widget>> c) {
-	if (count != WidgetChildCount::multiple) throw std::runtime_error("Child is not of multiple count");
+	if (contentType != WidgetContentType::multipleChildren) throw std::runtime_error("Child is not of multipleChildren contentType");
 
 	m_children = std::move(c);
 }
 
 void Widget::shrinkWrapWidget() {
 	auto padding = getPadding().getHorizontalVectical();
-	if (m_data.shrinkWrap == Axis::horizontal || m_data.shrinkWrap == Axis::both)
-		m_data.size.x = m_child->getLayoutSize().x + padding.x;
+	if (getData().shrinkWrap == Axis::horizontal || getData().shrinkWrap == Axis::both)
+		getData().size.x = m_child->getLayoutSize().x + padding.x;
 
-	if (m_data.shrinkWrap == Axis::vertical || m_data.shrinkWrap == Axis::both)
-		m_data.size.y = m_child->getLayoutSize().y + padding.y;
+	if (getData().shrinkWrap == Axis::vertical || getData().shrinkWrap == Axis::both)
+		getData().size.y = m_child->getLayoutSize().y + padding.y;
 }
 
 void Widget::expandWidget() {
 	auto margin = getMargin().getHorizontalVectical();
-	if (m_data.expand == Axis::horizontal || m_data.expand == Axis::both)
-		m_data.size.x = m_parent->getContentSize().x - margin.x;
+	if (getData().expand == Axis::horizontal || getData().expand == Axis::both)
+		getData().size.x = m_parent->getContentSize().x - margin.x;
 
-	if (m_data.expand == Axis::vertical || m_data.expand == Axis::both)
-		m_data.size.y = m_parent->getContentSize().y - margin.y;
+	if (getData().expand == Axis::vertical || getData().expand == Axis::both)
+		getData().size.y = m_parent->getContentSize().y - margin.y;
 }
 
 void Widget::getHintedSize() {
-	if (sizeHint.x != -1) m_data.size.x = sizeHint.x;
-	if (sizeHint.y != -1) m_data.size.y = sizeHint.y;
+	if (sizeHint.x != -1) getData().size.x = sizeHint.x;
+	if (sizeHint.y != -1) getData().size.y = sizeHint.y;
 }
 
-void Widget::update() { // NOLINT(misc-no-recursion)
-	switch (count) {
-		case WidgetChildCount::none: {
+void Widget::update() {// NOLINT(misc-no-recursion)
+	switch (contentType) {
+		case WidgetContentType::none: {
 			expandWidget();
 			getHintedSize();
 			return;
 		}
-		case WidgetChildCount::single: {
+		case WidgetContentType::singleChild: {
 			if (m_child) {
 				m_child->setParent(this);
 				shrinkWrapWidget();
@@ -168,11 +202,18 @@ void Widget::update() { // NOLINT(misc-no-recursion)
 			if (m_child) m_child->update();
 			return;
 		}
-		case WidgetChildCount::multiple: {
+		case WidgetContentType::invisibleWithChild: {
+			if (m_child) {
+				m_child->setParent(getParent());
+				m_child->update();
+			}
+			return;
+		}
+		case WidgetContentType::multipleChildren: {
 			if (m_parent != nullptr) expandWidget();
 			getHintedSize();
 
-			for (auto &childPtr : m_children) {
+			for (auto &childPtr: m_children) {
 				if (!childPtr) continue;
 				childPtr->setParent(this);
 				childPtr->update();
@@ -182,28 +223,33 @@ void Widget::update() { // NOLINT(misc-no-recursion)
 	}
 }
 
-void Widget::draw() { // NOLINT(misc-no-recursion)
-	switch (count) {
-		case WidgetChildCount::none: {
+void Widget::draw() {// NOLINT(misc-no-recursion)
+	switch (contentType) {
+		case WidgetContentType::none: {
 			return;
 		}
-		case WidgetChildCount::single: {
+		case WidgetContentType::singleChild: {
 			auto pos = getPos() + getMargin().getTopLeft() + getPadding().getTopLeft();
 
-			auto child = getChild();
-
-			if (child) {
+			if (auto child = getChild()) {
 				child->setPos(pos);
 				child->draw();
 			}
 			return;
 		}
-		case WidgetChildCount::multiple: {
+		case WidgetContentType::invisibleWithChild: {
+			if (auto child = getChild()) {
+				child->setPos(getPos());
+				child->draw();
+			}
+			return;
+		}
+		case WidgetContentType::multipleChildren: {
 			auto pos = getPos() + getMargin().getTopLeft() + getPadding().getTopLeft();
 
 			auto children = getChildren();
 
-			for (auto &child : children) {
+			for (auto &child: children) {
 				child->setPos(pos);
 				child->draw();
 			}
@@ -212,32 +258,44 @@ void Widget::draw() { // NOLINT(misc-no-recursion)
 	}
 }
 
+// TODO: should instead get the hitcheck rects of the child
+// Only things like Boxes should actually return a hitcheck rect in practice
 std::vector<Rect> Widget::getHitcheckRects() const {
-	switch (count) {
-		case WidgetChildCount::none: {
+	switch (contentType) {
+		case WidgetContentType::none: {
 			return {};
 		}
 		default: {
-			if (m_data.passThrough) return {};
+			if (getData().passThrough) return {};
 			return {getRect()};
 		}
 	}
 }
 
 const Axis &Widget::getShrinkWrap() const {
-	return m_data.shrinkWrap;
+	return getData().shrinkWrap;
 }
 
 const Axis &Widget::getExpand() const {
-	return m_data.expand;
+	return getData().expand;
 }
 
 const bool &Widget::getPassThough() const {
-	return m_data.passThrough;
+	return getData().passThrough;
 }
 
 void Widget::setPassThrough(const bool &p) {
-	m_data.passThrough = p;
+	getData().passThrough = p;
+}
+
+void Widget::overrideData(const WidgetData &newData) {
+	m_data = newData.withKey(m_data.key);
+
+	if (contentType == WidgetContentType::invisibleWithChild) {
+		if (auto child = getChild()) {
+			child->overrideData(newData);
+		}
+	}
 }
 
 WidgetData WidgetData::withKey(std::shared_ptr<Key> newKey) const {

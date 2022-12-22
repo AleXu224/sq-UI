@@ -18,7 +18,7 @@ using namespace squi;
 
 Screen *Screen::currentScreen = nullptr;
 
-Screen::Screen() : Widget(WidgetData{}, WidgetChildCount::single) {
+Screen::Screen() : Widget(WidgetData{}, WidgetContentType::singleChild) {
 	const auto system = L"kernel32.dll";
 	DWORD dummy;
 	const auto cbInfo =

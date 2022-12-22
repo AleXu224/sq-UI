@@ -18,10 +18,11 @@ namespace squi {
 		none,
 	};
 
-	enum class WidgetChildCount {
+	enum class WidgetContentType {
 		none,
-		single,
-		multiple,
+		singleChild,
+		invisibleWithChild,
+		multipleChildren,
 	};
 
 	struct WidgetData {
@@ -69,8 +70,8 @@ namespace squi {
 		Widget *m_parent = nullptr;
 		static int instances;
 
-		// The ammount of m_children this widget will have
-		const WidgetChildCount count;
+		// The type content this widget will have
+		const WidgetContentType contentType;
 
 		// A hint as to what the size of the widget should be
 		// This should be given by another widget that would like to change the
@@ -80,13 +81,17 @@ namespace squi {
 		std::shared_ptr<Widget> m_child{};
 		std::vector<std::shared_ptr<Widget>> m_children{};
 
+		[[nodiscard]] WidgetData& getData();
+		[[nodiscard]] const WidgetData& getData() const;
+	protected:
+		void overrideData(const WidgetData &newData);
 	public:
-		Widget() : m_data(WidgetData{}), count(WidgetChildCount::none) {
+		Widget() : m_data(WidgetData{}), contentType(WidgetContentType::none) {
 			this->m_data.key->set(this);
 			++instances;
 		}
-		explicit Widget(WidgetData data, WidgetChildCount count = WidgetChildCount::none)
-			: m_data(std::move(data)), count(count) {
+		explicit Widget(WidgetData data, WidgetContentType contentType = WidgetContentType::none)
+			: m_data(std::move(data)), contentType(contentType) {
 			this->m_data.key->set(this);
 			++instances;
 		}
@@ -94,18 +99,20 @@ namespace squi {
 		Widget(const Widget &) = delete;
 		Widget(Widget &&) = delete;
 
+
 		[[nodiscard]] virtual const vec2 &getPos() const;
 		[[nodiscard]] virtual const vec2 &getSize() const;
 		[[nodiscard]] virtual const Margin &getMargin() const;
 		[[nodiscard]] virtual const Margin &getPadding() const;
 		[[nodiscard]] virtual Widget *getParent() const;
 		[[nodiscard]] virtual const vec2 &getSizeHint() const;
+		[[nodiscard]] std::shared_ptr<Widget> &getChild();
 		[[nodiscard]] const std::shared_ptr<Widget> &getChild() const;
 		[[nodiscard]] std::vector<std::shared_ptr<Widget>> getChildren() const;
 		[[nodiscard]] const Axis &getShrinkWrap() const;
 		[[nodiscard]] const Axis &getExpand() const;
 		[[nodiscard]] const bool &getPassThough() const;
-		[[nodiscard]] const WidgetChildCount &getChildCountType() const;
+		[[nodiscard]] const WidgetContentType &getChildCountType() const;
 
 		[[nodiscard]] virtual const std::shared_ptr<Key> &getKey() const;
 

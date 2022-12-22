@@ -4,7 +4,7 @@
 
 using namespace squi;
 
-ScrollBar::ScrollBar(const ScrollbarArgs &args) : InvisibleWidget(args.data), scrollableKey(args.scrollableKey) {
+ScrollBar::ScrollBar(const ScrollbarArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild), scrollableKey(args.scrollableKey) {
 	setChild(new Box(BoxArgs{
 		.data{
 			.key{bgKey},
@@ -28,7 +28,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args) : InvisibleWidget(args.data), sc
 }
 
 void ScrollBar::update() {
-	InvisibleWidget::update();
+	Widget::update();
 
 	auto scrollable = scrollableKey->getAs<Scrollable>();
 	auto bg = bgKey->getAs<Box>();

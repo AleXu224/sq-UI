@@ -3,10 +3,11 @@
 using namespace squi;
 
 void Align::draw() {
-	auto child = getChild();
+	auto &child = getChild();
+	if (!child) return;
 
-	auto pos = InvisibleWidget::getPos();
-	auto maxOffset = InvisibleWidget::getParent()->getContentSize() - getChild()->getLayoutSize();
+	auto pos = getPos();
+	auto maxOffset = getParent()->getContentSize() - child->getLayoutSize();
 
 	auto offset = maxOffset * alignment;
 

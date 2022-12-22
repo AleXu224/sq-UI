@@ -2,7 +2,7 @@
 #include "../../include/Widgets/align.hpp"
 
 using namespace squi;
-ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : InvisibleWidget(args.data) {
+ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
 	setChild(new Stack(StackArgs{
 		.children {
 			new Scrollable{ScrollableArgs{
@@ -23,7 +23,7 @@ ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : I
 }
 
 void ScrollableWithScrollbar::update() {
-	InvisibleWidget::update();
+	Widget::update();
 
 	scrollbarKey->get()->update();
 }

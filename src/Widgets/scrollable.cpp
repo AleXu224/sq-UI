@@ -4,7 +4,7 @@
 
 using namespace squi;
 
-Scrollable::Scrollable(const ScrollableArgs& args) : Widget(args.data, WidgetChildCount::single) {
+Scrollable::Scrollable(const ScrollableArgs& args) : Widget(args.data, WidgetContentType::singleChild) {
 	// A scrollable that is shrink wrapped makes no sense and defeats the purpose of the whole widget
 	if (args.data.shrinkWrap != Axis::none) {
 		throw std::runtime_error("Cannot have a scrollable that is shrink wrapped!");
@@ -28,7 +28,7 @@ void Scrollable::update() {
 void Scrollable::setScroll(const float &newScroll) {
 	scroll = newScroll;
 
-	const auto child = getChild();
+	const auto &child = getChild();
 	const auto childSize = child->getLayoutSize();
 	const auto scrollableSize = getSize();
 	const auto maxScroll = childSize.y - scrollableSize.y;

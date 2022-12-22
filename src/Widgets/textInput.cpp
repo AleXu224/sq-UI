@@ -4,7 +4,7 @@
 using namespace squi;
 
 TextInput::TextInput(const TextInputArgs &args)
-	: Widget(args.data, WidgetChildCount::single),
+	: Widget(args.data, WidgetContentType::singleChild),
 	  cursorColor(args.cursorColor),
 	  onChange(args.onChange),
 	  selectText(std::make_shared<Text>(TextArgs{

@@ -34,4 +34,4 @@
 /cmake-build-release-clang/
 /.idea/
 /.vscode/
-/.build/
+/build/

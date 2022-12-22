@@ -111,6 +111,9 @@ void Screen::init_glfw() {
 		else
 			GestureDetector::g_keys.at(key) = {action, mods};
 	});
+	glfwSetCursorEnterCallback(window, [](GLFWwindow *m_window, int entered) {
+		GestureDetector::g_cursorInside = static_cast<bool>(entered);
+	});
 
 	glfwMakeContextCurrent(window);
 

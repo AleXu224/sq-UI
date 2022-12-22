@@ -29,6 +29,7 @@ namespace squi {
 		static vec2 g_scrollDelta;
 		static std::vector<Rect> g_hitCheckRects;
 		static vec2 g_dpi;
+		static bool g_cursorInside;
 
 		// Wether the cursor is directly above the widget, without a stacked widget being on top
 		bool hovered = false;

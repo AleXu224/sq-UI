@@ -11,6 +11,7 @@ unsigned char GestureDetector::g_textInput{0};
 vec2 GestureDetector::g_scrollDelta{0};
 std::vector<Rect> GestureDetector::g_hitCheckRects{};
 vec2 GestureDetector::g_dpi{96};
+bool GestureDetector::g_cursorInside{false};
 
 bool GestureDetector::isKey(int key, int action, int mods) {
 	if (!g_keys.contains(key)) return false;
@@ -38,7 +39,7 @@ void GestureDetector::update() {
 		}
 	}
 
-	if (!cursorInsideAnotherWidget && key->get()->getRect().contains(g_cursorPos)) {
+	if (g_cursorInside && !cursorInsideAnotherWidget && key->get()->getRect().contains(g_cursorPos)) {
 		scrollDelta = g_scrollDelta;
 
 		if (!hovered && onEnter) onEnter(this);

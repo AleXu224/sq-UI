@@ -22,8 +22,7 @@ TextInput::TextInput(const TextInputArgs &args)
 	}));
 }
 
-void TextInput::update() {
-	Widget::update();
+void TextInput::updateBeforeChild() {
 	gd.update();
 
 	if (!gd.active) return;
@@ -284,7 +283,7 @@ void TextInput::draw() {
 		auto leftMargin = selectText->calculateSizeFor(value.substr(0, selectStartPos)).x;
 		selectText->setText(value.substr(selectStartPos, selectEndPos - selectStartPos));
 		selectText->setParent(this);
-		selectText->update();
+		selectText->updateBeforeChild();
 
 		auto selectPos = pos.withXOffset(leftMargin - horizontalScroll);
 

@@ -20,9 +20,10 @@ namespace squi {
 		void init_glfw();
 		void init_direct2d();
 
-		void update() override;
+		void customUpdate() override;
 		void draw() override;
 
+		bool isAnimationRunning = false;
 	public:
 		GLFWwindow *window = nullptr;
 		ID2D1HwndRenderTarget *canvas = nullptr;
@@ -39,6 +40,8 @@ namespace squi {
 		void run();
 
 		void addOverlay(Overlay *o);
+
+		void animationRunning();
 
 		static Screen *getCurrentScreen();
 	};

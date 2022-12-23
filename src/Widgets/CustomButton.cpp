@@ -17,9 +17,7 @@ CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetCont
 	}));
 }
 
-void CustomButton::update() {
-	Widget::update();
-
+void CustomButton::updateBeforeChild() {
 	auto boxWidget = boxKey->getAs<Box>();
 	auto boxGD = boxWidget->getGD();
 

@@ -13,7 +13,7 @@ namespace squi {
 	public:
 		explicit ScrollableWithScrollbar(const ScrollableArgs &args);
 
-		void update() override;
+		void updateAfterChild() override;
 	};
 }
 

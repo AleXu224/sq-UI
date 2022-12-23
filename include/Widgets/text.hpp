@@ -51,7 +51,7 @@ namespace squi {
 
 		vec2 calculateSizeFor(const std::string& val) const;
 
-		void update() override;
+		void updateBeforeChild() override;
 
 		void draw() override;
 

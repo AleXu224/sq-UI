@@ -16,11 +16,25 @@ Box::Box(const BoxArgs &args) : Widget(args.data, WidgetContentType::singleChild
 	gd.onLeave = args.onLeave;
 	if (gd.onClick || gd.onEnter || gd.onLeave) shouldUpdateGd = true;
 	shouldClipContents = args.shouldClipContents;
+
+	auto &transition = getTransition();
+
+	transition.addWatch(color.r);
+	transition.addWatch(color.g);
+	transition.addWatch(color.b);
+	transition.addWatch(color.a);
+
+	transition.addWatch(border.color.r);
+	transition.addWatch(border.color.g);
+	transition.addWatch(border.color.b);
+	transition.addWatch(border.color.a);
+
+	transition.addWatch(border.size);
+
+	transition.addWatch(borderRadius);
 }
 
-void Box::update() {
-	Widget::update();
-
+void Box::updateBeforeChild() {
 	if (shouldUpdateGd) gd.update();
 }
 

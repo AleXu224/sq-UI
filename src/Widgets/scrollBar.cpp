@@ -4,13 +4,21 @@
 
 using namespace squi;
 
-ScrollBar::ScrollBar(const ScrollbarArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild), scrollableKey(args.scrollableKey) {
+ScrollBar::ScrollBar(const ScrollbarArgs &args)
+	: Widget(args.data,
+			 WidgetContentType::invisibleWithChild),
+	  scrollableKey(args.scrollableKey) {
 	setChild(new Box(BoxArgs{
 		.data{
 			.key{bgKey},
 			.size{12},
 			.padding{3, 2},
 			.expand = Axis::vertical,
+			.transition{
+				.enabled = true,
+				.duration = 200,
+				.curve = TransitionCurves::easeInOut,
+			},
 		},
 		.color{bgColorInactive},
 		.borderRadius = 6,
@@ -19,6 +27,11 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args) : Widget(args.data, WidgetConten
 			.data{
 				.key{thumbKey},
 				.size{6},
+				.transition{
+					.enabled = true,
+					.duration = 200,
+					.curve = TransitionCurves::easeInOut,
+				},
 			},
 			.color{thumbColor},
 			.borderRadius = 3,
@@ -27,9 +40,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args) : Widget(args.data, WidgetConten
 	}));
 }
 
-void ScrollBar::update() {
-	Widget::update();
-
+void ScrollBar::updateFromScrollable() {
 	auto scrollable = scrollableKey->getAs<Scrollable>();
 	auto bg = bgKey->getAs<Box>();
 	auto thumb = thumbKey->getAs<Box>();
@@ -47,6 +58,17 @@ void ScrollBar::update() {
 	// Position
 	auto thumbOffset = (scroll / contentSize) * availableThumbSpace;
 	thumb->setMargin(Margin{0, 0, thumbOffset, 0});
+}
+
+void ScrollBar::updateBeforeChild() {
+	auto scrollable = scrollableKey->getAs<Scrollable>();
+	auto bg = bgKey->getAs<Box>();
+	auto thumb = thumbKey->getAs<Box>();
+
+	auto scroll = scrollable->getScroll();
+	auto contentSize = scrollable->getChild()->getLayoutSize().y;
+
+	auto availableThumbSpace = bg->getContentSize().y;
 
 	// Hover
 	auto bgGD = bg->getGD();

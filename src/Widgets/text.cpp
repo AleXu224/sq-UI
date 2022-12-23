@@ -22,7 +22,7 @@ Text::Text(const TextArgs &args)
 //	Screen::getCurrentScreen()->textFactory->CreateTextLayout(L"\uE115", 1, format, INFINITY, 0, &layout);
 }
 
-void Text::update() {
+void Text::updateBeforeChild() {
 	if (maxWidth == -1 && !lineWrap) {
 		if (layout->GetMaxWidth() != INFINITY) layout->SetMaxWidth(INFINITY);
 	} else if (maxWidth == -1) {
@@ -35,8 +35,6 @@ void Text::update() {
 	DWRITE_TEXT_METRICS metrics{};
 	layout->GetMetrics(&metrics);
 	setSize({metrics.widthIncludingTrailingWhitespace, metrics.height});
-
-	Widget::update();
 }
 
 void Text::draw() {

@@ -53,9 +53,7 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 	}});
 }
 
-void TextBox::update() {
-	Widget::update();
-
+void TextBox::updateBeforeChild() {
 	auto box = boxKey->getAs<Box>();
 	auto textInput = textInputKey->getAs<TextInput>();
 	auto underline = underlineKey->getAs<Box>();

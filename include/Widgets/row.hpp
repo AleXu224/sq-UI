@@ -25,7 +25,7 @@ namespace squi {
 			setChildren(args.children);
 		}
 
-		void update() override;
+		void customUpdate() override;
 
 		void draw() override;
 	};

@@ -35,7 +35,7 @@ namespace squi {
 
 		[[nodiscard]] const GestureDetector &getGD() const;
 
-		void update() override;
+		void updateBeforeChild() override;
 		void draw() override;
 	};
 }// namespace squi

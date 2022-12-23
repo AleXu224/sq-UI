@@ -11,7 +11,7 @@ namespace squi {
 		float y;
 
 		vec2() : x(0), y(0) {}
-		explicit vec2(const float &xy) : x(xy), y(xy) {}
+		vec2(const float &xy) : x(xy), y(xy) {}
 		vec2(const float &x, const float &y) : x(x), y(y) {}
 
 		void operator+=(const vec2 &v);

@@ -18,8 +18,7 @@ Scrollable::Scrollable(const ScrollableArgs& args) : Widget(args.data, WidgetCon
 	}));
 }
 
-void Scrollable::update() {
-	Widget::update();
+void Scrollable::updateBeforeChild() {
 	gd.update();
 
 	setScroll(scroll + gd.getScroll().y * -40);

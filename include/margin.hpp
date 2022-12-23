@@ -12,7 +12,7 @@ namespace squi {
 		float bottom;
 
 		Margin() : left(0), right(0), top(0), bottom(0) {}
-		explicit Margin(const float &lrtb) : left(lrtb), right(lrtb), top(lrtb), bottom(lrtb) {}
+		Margin(const float &lrtb) : left(lrtb), right(lrtb), top(lrtb), bottom(lrtb) {}
 		Margin(const float &lr, const float &tb) : left(lr), right(lr), top(tb), bottom(tb) {}
 		Margin(const float &l, const float &r, const float &t, const float &b) : left(l), right(r), top(t), bottom(b) {}
 

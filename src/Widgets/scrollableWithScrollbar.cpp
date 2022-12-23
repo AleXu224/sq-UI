@@ -4,9 +4,12 @@
 using namespace squi;
 ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
 	setChild(new Stack(StackArgs{
-		.children {
+		.children{
 			new Scrollable{ScrollableArgs{
-				.data{args.data.withKey(scrollableKey)},
+				.data{
+					args.data
+						.withKey(scrollableKey),
+				},
 				.children{args.children},
 			}},
 			new Align(AlignArgs{
@@ -22,8 +25,6 @@ ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : W
 	}));
 }
 
-void ScrollableWithScrollbar::update() {
-	Widget::update();
-
-	scrollbarKey->get()->update();
+void ScrollableWithScrollbar::updateAfterChild() {
+	scrollbarKey->getAs<ScrollBar>()->updateFromScrollable();
 }

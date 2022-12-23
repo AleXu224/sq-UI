@@ -29,7 +29,7 @@ namespace squi {
 
 		void setActive();
 
-		void update() override;
+		void updateBeforeChild() override;
 		void draw() override;
 	};
 }

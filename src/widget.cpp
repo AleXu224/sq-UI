@@ -7,24 +7,16 @@ int Widget::instances = 0;
 
 WidgetData &Widget::getData() {
 	if (contentType == WidgetContentType::invisibleWithChild) {
-		if (auto child = getChild())
-			return child->getData();
-		else
-			return m_data;
-	} else {
-		return m_data;
+		if (auto child = getChild()) return child->getData();
 	}
+	return m_data;
 }
 
 const WidgetData &Widget::getData() const {
 	if (contentType == WidgetContentType::invisibleWithChild) {
-		if (auto child = getChild())
-			return child->getData();
-		else
-			return m_data;
-	} else {
-		return m_data;
+		if (auto child = getChild()) return child->getData();
 	}
+	return m_data;
 }
 
 const vec2 &Widget::getSize() const {
@@ -125,8 +117,9 @@ void Widget::setChild(Widget *c) {
 
 	auto &child = getChild();
 	child.reset(c);
-	if (contentType == WidgetContentType::invisibleWithChild && child)
+	if (contentType == WidgetContentType::invisibleWithChild && child) {
 		child->overrideData(m_data);
+	}
 }
 
 void Widget::setChild(std::shared_ptr<Widget> c) {
@@ -134,8 +127,9 @@ void Widget::setChild(std::shared_ptr<Widget> c) {
 		throw std::runtime_error("Child is not of singleChild contentType");
 
 	m_child = std::move(c);
-	if (contentType == WidgetContentType::invisibleWithChild)
+	if (contentType == WidgetContentType::invisibleWithChild && m_child) {
 		m_child->overrideData(m_data);
+	}
 }
 
 std::vector<std::shared_ptr<Widget>> Widget::childrenFromPointers(const std::vector<Widget *> &children) {
@@ -182,13 +176,26 @@ void Widget::expandWidget() {
 void Widget::getHintedSize() {
 	if (sizeHint.x != -1) getData().size.x = sizeHint.x;
 	if (sizeHint.y != -1) getData().size.y = sizeHint.y;
+	// Reset the size hint
+	sizeHint = vec2{-1, -1};
+}
+
+bool hasCustomUpdate = true;
+void Widget::customUpdate() {
+	hasCustomUpdate = false;
 }
 
 void Widget::update() {// NOLINT(misc-no-recursion)
+	hasCustomUpdate = true;
+	customUpdate();
+	if (hasCustomUpdate) return;
+
 	switch (contentType) {
 		case WidgetContentType::none: {
 			expandWidget();
 			getHintedSize();
+			updateBeforeChild();
+			if (transition.enabled) transition.update();
 			return;
 		}
 		case WidgetContentType::singleChild: {
@@ -199,25 +206,35 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 			if (m_parent != nullptr) expandWidget();
 			getHintedSize();
 
+			updateBeforeChild();
 			if (m_child) m_child->update();
+			updateAfterChild();
+			if (transition.enabled) transition.update();
+			
 			return;
 		}
 		case WidgetContentType::invisibleWithChild: {
+			updateBeforeChild();
 			if (m_child) {
 				m_child->setParent(getParent());
 				m_child->update();
 			}
+			updateAfterChild();
+			if (transition.enabled) transition.update();
 			return;
 		}
 		case WidgetContentType::multipleChildren: {
 			if (m_parent != nullptr) expandWidget();
 			getHintedSize();
+			updateBeforeChild();
 
 			for (auto &childPtr: m_children) {
 				if (!childPtr) continue;
 				childPtr->setParent(this);
 				childPtr->update();
 			}
+			updateAfterChild();
+			if (transition.enabled) transition.update();
 			return;
 		}
 	}
@@ -280,6 +297,14 @@ const Axis &Widget::getExpand() const {
 	return getData().expand;
 }
 
+const TransitionArgs &Widget::getTransitionArgs() const {
+	return getData().transition;
+}
+
+Transition &Widget::getTransition() {
+	return transition;
+}
+
 const bool &Widget::getPassThough() const {
 	return getData().passThrough;
 }
@@ -289,7 +314,7 @@ void Widget::setPassThrough(const bool &p) {
 }
 
 void Widget::overrideData(const WidgetData &newData) {
-	m_data = newData.withKey(m_data.key);
+	m_data.overrideFrom(newData);
 
 	if (contentType == WidgetContentType::invisibleWithChild) {
 		if (auto child = getChild()) {
@@ -338,4 +363,49 @@ WidgetData WidgetData::withPassThrough(const bool &newPassThrough) const {
 	auto ret = *this;
 	ret.passThrough = newPassThrough;
 	return ret;
+}
+
+WidgetData WidgetData::withTransition(const TransitionArgs &newTransition) const {
+	auto ret = *this;
+	ret.transition = newTransition;
+	return ret;
+}
+
+void WidgetData::initializeTransition(Transition &transition) {
+	transition.addWatch(size.x);
+	transition.addWatch(size.y);
+
+	transition.addWatch(margin.top);
+	transition.addWatch(margin.right);
+	transition.addWatch(margin.bottom);
+	transition.addWatch(margin.left);
+
+	transition.addWatch(padding.top);
+	transition.addWatch(padding.right);
+	transition.addWatch(padding.bottom);
+	transition.addWatch(padding.left);
+}
+
+void WidgetData::overrideFrom(const WidgetData &rhs) {
+	WidgetData defaultData{};
+	if (rhs.size.x != defaultData.size.x) size.x = rhs.size.x;
+	if (rhs.size.y != defaultData.size.y) size.y = rhs.size.y;
+
+	if (rhs.margin.top != defaultData.margin.top) margin.top = rhs.margin.top;
+	if (rhs.margin.right != defaultData.margin.right) margin.right = rhs.margin.right;
+	if (rhs.margin.bottom != defaultData.margin.bottom) margin.bottom = rhs.margin.bottom;
+	if (rhs.margin.left != defaultData.margin.left) margin.left = rhs.margin.left;
+
+	if (rhs.padding.top != defaultData.padding.top) padding.top = rhs.padding.top;
+	if (rhs.padding.right != defaultData.padding.right) padding.right = rhs.padding.right;
+	if (rhs.padding.bottom != defaultData.padding.bottom) padding.bottom = rhs.padding.bottom;
+	if (rhs.padding.left != defaultData.padding.left) padding.left = rhs.padding.left;
+
+	if (rhs.shrinkWrap != defaultData.shrinkWrap) shrinkWrap = rhs.shrinkWrap;
+	if (rhs.expand != defaultData.expand) expand = rhs.expand;
+	if (rhs.passThrough != defaultData.passThrough) passThrough = rhs.passThrough;
+
+	if (rhs.transition.enabled != defaultData.transition.enabled) transition.enabled = rhs.transition.enabled;
+	if (rhs.transition.duration != defaultData.transition.duration) transition.duration = rhs.transition.duration;
+	if (rhs.transition.curve.target_type() != defaultData.transition.curve.target_type()) transition.curve = rhs.transition.curve;
 }

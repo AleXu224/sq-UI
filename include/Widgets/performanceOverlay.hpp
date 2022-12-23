@@ -12,15 +12,12 @@ namespace squi {
 		std::shared_ptr<Key> pollKey = std::make_shared<Key>();
 		std::shared_ptr<Key> updateKey = std::make_shared<Key>();
 		std::shared_ptr<Key> drawKey = std::make_shared<Key>();
+		std::shared_ptr<Key> instancesKey = std::make_shared<Key>();
 		double lastFpsUpdate = 0;
-		std::vector<double> fpsValues{};
-		std::vector<double> pollValues{};
-		std::vector<double> updateValues{};
-		std::vector<double> drawValues{};
 	public:
 		PerformanceOverlay();
 
-		void update() override;
+		void updateBeforeChild() override;
 
 		void draw() override;
 	};

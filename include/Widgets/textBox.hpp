@@ -17,7 +17,7 @@ namespace squi {
 	public:
 		explicit TextBox(const TextBoxArgs &args);
 
-		void update() override;
+		void updateBeforeChild() override;
 	};
 }// namespace squi
 

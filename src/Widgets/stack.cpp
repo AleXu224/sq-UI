@@ -10,7 +10,7 @@ Stack::Stack(const StackArgs &args) : Widget(args.data, WidgetContentType::multi
 	setChildren(args.children);
 }
 
-void Stack::update() {
+void Stack::customUpdate() {
 	auto parent = getParent();
 	assert(parent != nullptr);
 

@@ -7,6 +7,7 @@
 #include "margin.hpp"
 #include "memory"
 #include "rect.hpp"
+#include "transition.hpp"
 #include "vec2.hpp"
 #include "vector"
 
@@ -55,13 +56,31 @@ namespace squi {
 		// Useful when making a widget that should ignore inputs like an overlay
 		bool passThrough = false;
 
+		TransitionArgs transition{};
+
 		[[nodiscard]] WidgetData withKey(std::shared_ptr<Key> newKey) const;
-		[[nodiscard]] WidgetData withSize(const vec2& newSize) const;
-		[[nodiscard]] WidgetData withMargin(const Margin& newMargin) const;
-		[[nodiscard]] WidgetData withPadding(const Margin& newPadding) const;
-		[[nodiscard]] WidgetData withShrinkWrap(const Axis& newShrinkWrap) const;
-		[[nodiscard]] WidgetData withExpand(const Axis& newExpand) const;
-		[[nodiscard]] WidgetData withPassThrough(const bool& newPassThrough) const;
+		[[nodiscard]] WidgetData withSize(const vec2 &newSize) const;
+		[[nodiscard]] WidgetData withMargin(const Margin &newMargin) const;
+		[[nodiscard]] WidgetData withPadding(const Margin &newPadding) const;
+		[[nodiscard]] WidgetData withShrinkWrap(const Axis &newShrinkWrap) const;
+		[[nodiscard]] WidgetData withExpand(const Axis &newExpand) const;
+		[[nodiscard]] WidgetData withPassThrough(const bool &newPassThrough) const;
+		[[nodiscard]] WidgetData withTransition(const TransitionArgs &newTransition) const;
+
+		void initializeTransition(Transition &transition);
+
+		void operator=(const WidgetData &rhs) {
+			this->key = rhs.key;
+			this->size = rhs.size;
+			this->margin = rhs.margin;
+			this->padding = rhs.padding;
+			this->shrinkWrap = rhs.shrinkWrap;
+			this->expand = rhs.expand;
+			this->passThrough = rhs.passThrough;
+			this->transition = rhs.transition;
+		}
+
+		void overrideFrom(const WidgetData &rhs);
 	};
 
 	class Widget {
@@ -81,18 +100,26 @@ namespace squi {
 		std::shared_ptr<Widget> m_child{};
 		std::vector<std::shared_ptr<Widget>> m_children{};
 
-		[[nodiscard]] WidgetData& getData();
-		[[nodiscard]] const WidgetData& getData() const;
+		[[nodiscard]] WidgetData &getData();
+		[[nodiscard]] const WidgetData &getData() const;
+
+		Transition transition{};
+
 	protected:
 		void overrideData(const WidgetData &newData);
+
 	public:
 		Widget() : m_data(WidgetData{}), contentType(WidgetContentType::none) {
 			this->m_data.key->set(this);
+			transition = Transition(this->m_data.transition);
+			this->m_data.initializeTransition(transition);
 			++instances;
 		}
 		explicit Widget(WidgetData data, WidgetContentType contentType = WidgetContentType::none)
-			: m_data(std::move(data)), contentType(contentType) {
+			: m_data(data), contentType(contentType) {
 			this->m_data.key->set(this);
+			transition = Transition(this->m_data.transition);
+			this->m_data.initializeTransition(transition);
 			++instances;
 		}
 
@@ -111,6 +138,8 @@ namespace squi {
 		[[nodiscard]] std::vector<std::shared_ptr<Widget>> getChildren() const;
 		[[nodiscard]] const Axis &getShrinkWrap() const;
 		[[nodiscard]] const Axis &getExpand() const;
+		[[nodiscard]] const TransitionArgs &getTransitionArgs() const;
+		[[nodiscard]] Transition &getTransition();
 		[[nodiscard]] const bool &getPassThough() const;
 		[[nodiscard]] const WidgetContentType &getChildCountType() const;
 
@@ -135,11 +164,14 @@ namespace squi {
 		void setChild(std::shared_ptr<Widget> c);
 		void setChildren(const std::vector<Widget *> &c);
 		void setChildren(std::vector<std::shared_ptr<Widget>> c);
-		void setPassThrough(const bool& p);
+		void setPassThrough(const bool &p);
 
 		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(const std::vector<Widget *> &children);
 
-		virtual void update();
+		void update();
+		virtual void customUpdate();
+		virtual void updateBeforeChild(){};
+		virtual void updateAfterChild(){};
 		virtual void draw();
 
 		virtual ~Widget() {
@@ -148,6 +180,11 @@ namespace squi {
 		}
 
 		void getHintedSize();
+
+		static const int &getInstances() {
+			return instances;
+		}
+
 	private:
 		// Helper functions
 		void shrinkWrapWidget();

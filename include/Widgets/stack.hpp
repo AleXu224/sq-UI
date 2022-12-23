@@ -15,7 +15,7 @@ namespace squi {
 
 		[[nodiscard]] std::vector<Rect> getHitcheckRects() const override;
 
-		void update() override;
+		void customUpdate() override;
 
 		void draw() override;
 	};

@@ -2,7 +2,7 @@
 
 using namespace squi;
 
-void Column::update() {
+void Column::customUpdate() {
 	auto children = getChildren();
 
 	float totalChildrenHeight = 0;

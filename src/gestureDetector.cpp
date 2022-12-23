@@ -28,9 +28,6 @@ bool GestureDetector::isKeyPressedOrRepeat(int key, int mods) {
 }
 
 void GestureDetector::update() {
-	GLFWwindow *window = Screen::getCurrentScreen()->window;
-	auto lmb = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-
 	bool cursorInsideAnotherWidget = false;
 	for (auto &widgetRect : g_hitCheckRects) {
 		if (widgetRect.contains(g_cursorPos)) {
@@ -45,11 +42,11 @@ void GestureDetector::update() {
 		if (!hovered && onEnter) onEnter(this);
 		hovered = true;
 
-		if (lmb == GLFW_PRESS && !focusedOutside) {
+		if (isKey(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS) && !focusedOutside) {
 			if (!focused) dragStart = g_cursorPos;
 			focused = true;
 			active = true;
-		} else if (lmb == GLFW_RELEASE) {
+		} else if (isKey(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE)) {
 			if (focused && !focusedOutside && onClick) onClick(this);
 			focused = false;
 			focusedOutside = false;
@@ -60,10 +57,10 @@ void GestureDetector::update() {
 		if (hovered && onLeave) onLeave(this);
 		hovered = false;
 
-		if (lmb == GLFW_PRESS && !focused) {
+		if (isKey(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS) && !focused) {
 			focusedOutside = true;
 			active = false;
-		} else if (lmb == GLFW_RELEASE) {
+		} else if (isKey(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE)) {
 			focused = false;
 			focusedOutside = false;
 		}

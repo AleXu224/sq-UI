@@ -52,8 +52,13 @@ void Screen::run() {
 		deltaTime = std::chrono::duration<double>(now - lastTime).count();
 		lastTime = now;
 
-		glfwWaitEvents();
-		//glfwPollEvents();
+		if (isAnimationRunning) {
+			isAnimationRunning = false;
+			glfwPollEvents();
+		} else {
+			isAnimationRunning = false;
+			glfwWaitEventsTimeout(0.5);
+		}
 		auto pollPoint = std::chrono::high_resolution_clock::now();
 
 		update();
@@ -106,10 +111,18 @@ void Screen::init_glfw() {
 		GestureDetector::g_scrollDelta = vec2{static_cast<float>(xoffset), static_cast<float>(yoffset)};
 	});
 	glfwSetKeyCallback(window, [](GLFWwindow *m_window, int key, int scancode, int action, int mods) {
+		Screen::getCurrentScreen()->animationRunning();
 		if (!GestureDetector::g_keys.contains(key))
 			GestureDetector::g_keys.insert({key, {action, mods}});
 		else
 			GestureDetector::g_keys.at(key) = {action, mods};
+	});
+	glfwSetMouseButtonCallback(window, [](GLFWwindow *m_window, int button, int action, int mods) {
+		Screen::getCurrentScreen()->animationRunning();
+		if (!GestureDetector::g_keys.contains(button))
+			GestureDetector::g_keys.insert({button, {action, mods}});
+		else
+			GestureDetector::g_keys.at(button) = {action, mods};
 	});
 	glfwSetCursorEnterCallback(window, [](GLFWwindow *m_window, int entered) {
 		GestureDetector::g_cursorInside = static_cast<bool>(entered);
@@ -173,7 +186,7 @@ Screen *Screen::getCurrentScreen() {
 	return currentScreen;
 }
 
-void Screen::update() {
+void Screen::customUpdate() {
 	auto size = canvas->GetSize();
 	setSize({
 		size.width,
@@ -230,4 +243,8 @@ void Screen::draw() {
 
 void Screen::addOverlay(Overlay *o) {
 	overlays.push_back(std::shared_ptr<Overlay>(o));
+}
+
+void Screen::animationRunning() {
+	isAnimationRunning = true;
 }

@@ -46,89 +46,160 @@ int main() {
 	//		})
 	//	});
 
-//	screen.setChild(new Box(BoxArgs{
-//		.data{
-//			.margin{2},
-//			.padding{2},
-//			.expand = squi::Axis::both,
-//		},
-//		.color{0},
-//		.child = new CustomButton(CustomButtonArgs{
-//			.data{
-//				.padding{12, 7},
-//				.shrinkWrap = squi::Axis::both,
-//			},
-//			.onClick = []() {
-//				printf("This works?\n");
-//			},
-//			.child = new Text(TextArgs{
-//				.text = "CText",
-//				.color{0, 0, 0, 1},
-//			}),
-//		}),
-//	}));
+	//	screen.setChild(new Box(BoxArgs{
+	//		.data{
+	//			.margin{2},
+	//			.padding{2},
+	//			.expand = squi::Axis::both,
+	//		},
+	//		.color{0},
+	//		.child = new CustomButton(CustomButtonArgs{
+	//			.data{
+	//				.padding{12, 7},
+	//				.shrinkWrap = squi::Axis::both,
+	//			},
+	//			.onClick = []() {
+	//				printf("This works?\n");
+	//			},
+	//			.child = new Text(TextArgs{
+	//				.text = "CText",
+	//				.color{0, 0, 0, 1},
+	//			}),
+	//		}),
+	//	}));
 
-//	screen.setChild(new ScrollableWithScrollbar(ScrollableArgs{
-//		.data{
-//			.expand = Axis::both,
-//		},
-//		.children {
-//			new Box(BoxArgs{
-//				.data {
-//					.size{300},
-//					.margin{0, 0, 0, 5},
-//				},
-//				.color {0, 0.5, 1},
-//			}),
-//			new Box(BoxArgs{
-//				.data {
-//					.size{300},
-//					.margin{0, 0, 0, 5},
-//				},
-//				.color {0, 0.6, 1},
-//			}),
-//			new Box(BoxArgs{
-//				.data {
-//					.size{300},
-//					.margin{0, 0, 0, 5},
-//				},
-//				.color {0, 0.7, 1},
-//			}),
-//			new Box(BoxArgs{
-//				.data {
-//					.size{300},
-//					.margin{0, 0, 0, 5},
-//				},
-//				.color {0, 0.8, 1},
-//			}),
-//			new Box(BoxArgs{
-//				.data {
-//					.size{300},
-//					.margin{0, 0, 0, 5},
-//				},
-//				.color {0, 0.9, 1},
-//			}),
-//		},
-//	}));
+	// screen.setChild(new ScrollableWithScrollbar(ScrollableArgs{
+	// 	.data{
+	// 		.expand = Axis::both,
+	// 	},
+	// 	.children {
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.5, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.6, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.7, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.8, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.9, 1},
+	// 		}),
+	// 	},
+	// }));
 
-	std::shared_ptr<Key> k = std::make_shared<Key>();
+	std::shared_ptr<Key> kk = std::make_shared<Key>();
 
-	screen.setChild(new CustomButton(CustomButtonArgs{
+	// Test the new transitions
+
+	screen.setChild(new Column(ColumnArgs{
 		.data{
-			.key{k},
-			.size{100},
+			.shrinkWrap = Axis::both,
 		},
-		.onClick = [&](){
-			auto elem = k->getAs<CustomButton>();
-			elem->setMargin(Margin{elem->getMargin().left + 16});
+		.children{
+			new Box(BoxArgs{
+				.data{
+					.key{kk},
+					.size{100},
+					.transition{
+						.enabled = true,
+						.duration = 200,
+						.curve = TransitionCurves::easeInOut,
+					},
+				},
+				.color{0, 0, 1},
+			}),
+			new CustomButton(CustomButtonArgs{
+				.data{
+					.shrinkWrap = Axis::both,
+					.transition{
+						.enabled = true,
+						.duration = 200,
+						.curve = TransitionCurves::easeInOut,
+					},
+				},
+				.onClick = [&]() {
+					static bool s = false;
+					auto elem = kk->getAs<Box>();
+					// elem->setSize(vec2{200, 200});
+					if (s) {
+						elem->setMargin(Margin{0});
+						elem->border.size = 0;
+						elem->borderRadius = 0;
+						elem->setSize(vec2{100, 100});
+					} else {
+						elem->setMargin(Margin{15});
+						elem->border.size = 4;
+						elem->borderRadius = 20;
+						elem->setSize(vec2{200, 200});
+					}
+					s = !s;
+				},
+				.child = new Text(TextArgs{
+					.data{
+						.margin{12, 6},
+					},
+					.text{"Modify Box"},
+					.color{0, 0, 0, 0.8},
+				}),
+			}),
 		},
 	}));
-//	screen.setChild(new TextBox(TextBoxArgs{
-//		.data {
-//			.margin{4},
-//			.expand = squi::Axis::horizontal,
-//		},
-//	}));
+
+	// std::shared_ptr<Key> k = std::make_shared<Key>();
+
+	// screen.setChild(new CustomButton(CustomButtonArgs{
+	// 	.data{
+	// 		.key{k},
+	// 		.size{100},
+	// 		.transition{
+	// 			.enabled = true,
+	// 			.duration = 200,
+	// 			.curve = TransitionCurves::easeInOut,
+	// 		},
+	// 	},
+	// 	.onClick = [&](){
+	// 		static bool s = false;
+	// 		auto elem = k->getAs<CustomButton>();
+	// 		if (s) {
+	// 			elem->setMargin(Margin{0});
+	// 			elem->setSize(vec2{100, 100});
+	// 		} else {
+	// 			elem->setMargin(Margin{15});
+	// 			elem->setSize(vec2{200, 200});
+	// 		}
+	// 		s = !s;
+	// 	},
+	// }));
+	//	screen.setChild(new TextBox(TextBoxArgs{
+	//		.data {
+	//			.margin{4},
+	//			.expand = squi::Axis::horizontal,
+	//		},
+	//	}));
 
 	screen.run();
 	return 0;

@@ -2,7 +2,7 @@
 
 using namespace squi;
 
-void Row::update() {
+void Row::customUpdate() {
 	auto children = getChildren();
 
 	float totalChildrenWidth = 0;

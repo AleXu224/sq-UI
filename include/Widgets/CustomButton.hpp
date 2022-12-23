@@ -25,7 +25,7 @@ namespace squi {
 	public:
 		explicit CustomButton(CustomButtonArgs args);
 
-		void update() override;
+		void updateBeforeChild() override;
 	};
 }// namespace squi
 

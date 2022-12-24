@@ -180,7 +180,6 @@ void Widget::getHintedSize() {
 	sizeHint = vec2{-1, -1};
 }
 
-bool hasCustomUpdate = true;
 void Widget::customUpdate() {
 	hasCustomUpdate = false;
 }
@@ -195,7 +194,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 			expandWidget();
 			getHintedSize();
 			updateBeforeChild();
-			if (transition.enabled) transition.update();
+			transition.update();
 			return;
 		}
 		case WidgetContentType::singleChild: {
@@ -209,7 +208,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 			updateBeforeChild();
 			if (m_child) m_child->update();
 			updateAfterChild();
-			if (transition.enabled) transition.update();
+			transition.update();
 			
 			return;
 		}
@@ -220,7 +219,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 				m_child->update();
 			}
 			updateAfterChild();
-			if (transition.enabled) transition.update();
+			transition.update();
 			return;
 		}
 		case WidgetContentType::multipleChildren: {
@@ -234,7 +233,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 				childPtr->update();
 			}
 			updateAfterChild();
-			if (transition.enabled) transition.update();
+			transition.update();
 			return;
 		}
 	}

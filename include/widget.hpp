@@ -100,10 +100,10 @@ namespace squi {
 		std::shared_ptr<Widget> m_child{};
 		std::vector<std::shared_ptr<Widget>> m_children{};
 
-		[[nodiscard]] WidgetData &getData();
-		[[nodiscard]] const WidgetData &getData() const;
 
 		Transition transition{};
+
+		bool hasCustomUpdate = true;
 
 	protected:
 		void overrideData(const WidgetData &newData);
@@ -126,6 +126,8 @@ namespace squi {
 		Widget(const Widget &) = delete;
 		Widget(Widget &&) = delete;
 
+		[[nodiscard]] WidgetData &getData();
+		[[nodiscard]] const WidgetData &getData() const;
 
 		[[nodiscard]] virtual const vec2 &getPos() const;
 		[[nodiscard]] virtual const vec2 &getSize() const;

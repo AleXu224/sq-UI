@@ -2,15 +2,16 @@
 #include "../../include/Widgets/CustomButton.hpp"
 #include "../../include/Widgets/stack.hpp"
 
+#include "../../include/screen.hpp"
+
 using namespace squi;
 
 TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
 	setChild(new Box{BoxArgs{
 		// Force shrinkwrap to be verical at the very least in order to properly fit the text
 		.data{
-			args.data
-				.withSize(args.data.size.withY(32))
-				.withKey(boxKey),
+			.key{boxKey},
+			.size{32},
 		},
 		.color{Color::fromHexRGBA("#FFFFFF0F")},
 		.borderRadius = 4,
@@ -45,12 +46,27 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 							.key{underlineKey},
 							.size{1},
 							.expand = Axis::horizontal,
+							.transition{
+								.enabled = true,
+								.duration = 200ms,
+								.curve = TransitionCurves::easeInOut,
+							}
 						},
 						.color{Color::fromHexRGBA("#FFFFFF8B")},
 					}),
 				}),
 			}}),
 	}});
+
+	boxKey->get()->getTransition().only(TransitionValues{
+		&boxKey->getAs<Box>()->color,
+	});
+
+	auto underline = underlineKey->getAs<Box>();
+	underline->getTransition().only(TransitionValues{
+		&underline->getData().size.y,
+		&underline->color,
+	});
 }
 
 void TextBox::updateBeforeChild() {
@@ -72,6 +88,6 @@ void TextBox::updateBeforeChild() {
 
 		box->color = Color::fromHexRGBA("#1E1E1EB2");
 		underline->setSize(underline->getSize().withY(2));
-		underline->color = Color::fromHexRGB("#60CDFF");
+		underline->color = Screen::getSystemAccentColor();
 	}
 }

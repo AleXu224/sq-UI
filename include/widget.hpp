@@ -117,9 +117,9 @@ namespace squi {
 		}
 		explicit Widget(WidgetData data, WidgetContentType contentType = WidgetContentType::none)
 			: m_data(data), contentType(contentType) {
-			this->m_data.key->set(this);
-			transition = Transition(this->m_data.transition);
-			this->m_data.initializeTransition(transition);
+			m_data.key->set(this);
+			transition = Transition(m_data.transition);
+			m_data.initializeTransition(transition);
 			++instances;
 		}
 

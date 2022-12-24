@@ -77,11 +77,15 @@ void PerformanceOverlay::updateBeforeChild() {
 	if (!shouldDraw) return;
 	Screen *pScreen = Screen::getCurrentScreen();
 
+	static constexpr auto toMs = [](std::chrono::duration<float> &duration) {
+		return std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(duration);
+	};
+
 	if (glfwGetTime() - lastFpsUpdate > 0.1) {
-		fpsKey->getAs<Text>()->setText(std::format("Fps: {:.0f}", 1 / pScreen->deltaTime));
-		pollKey->getAs<Text>()->setText(std::format("Poll: {:.2f}ms", pScreen->pollTime * 1000));
-		updateKey->getAs<Text>()->setText(std::format("Update: {:.2f}ms", pScreen->updateTime * 1000));
-		drawKey->getAs<Text>()->setText(std::format("Draw: {:.2f}ms", pScreen->drawTime * 1000));
+		fpsKey->getAs<Text>()->setText(std::format("Fps: {:.0f}", 1 / pScreen->deltaTime.count()));
+		pollKey->getAs<Text>()->setText(std::format("Poll: {}", toMs(pScreen->pollTime)));
+		updateKey->getAs<Text>()->setText(std::format("Update: {}", toMs(pScreen->updateTime)));
+		drawKey->getAs<Text>()->setText(std::format("Draw: {}", toMs(pScreen->drawTime)));
 		instancesKey->getAs<Text>()->setText(std::format("Widgets: {}", Widget::getInstances()));
 		lastFpsUpdate = glfwGetTime();
 	}

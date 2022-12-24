@@ -14,9 +14,12 @@
 #include "format"
 #include "ranges"
 
+#include "winrt/windows.ui.viewmanagement.h"
+
 using namespace squi;
 
 Screen *Screen::currentScreen = nullptr;
+Color Screen::systemAccentColor = Color::fromHexRGB("#60CDFF");
 
 Screen::Screen() : Widget(WidgetData{}, WidgetContentType::singleChild) {
 	const auto system = L"kernel32.dll";
@@ -49,7 +52,7 @@ void Screen::run() {
 
 	while (!glfwWindowShouldClose(window)) {
 		auto now = std::chrono::high_resolution_clock::now();
-		deltaTime = std::chrono::duration<double>(now - lastTime).count();
+		deltaTime = now - lastTime;
 		lastTime = now;
 
 		if (isAnimationRunning) {
@@ -61,14 +64,21 @@ void Screen::run() {
 		}
 		auto pollPoint = std::chrono::high_resolution_clock::now();
 
+		// Get the system accent accent color;
+		using namespace winrt;
+		using namespace Windows::UI::ViewManagement;
+		UISettings const ui_settings{};
+		auto const accent_color{ui_settings.GetColorValue(UIColorType::Accent)};
+		systemAccentColor = Color::fromRGB255(accent_color.R, accent_color.G, accent_color.B);
+
 		update();
 		auto updatePoint = std::chrono::high_resolution_clock::now();
 		draw();
 		auto drawPoint = std::chrono::high_resolution_clock::now();
 
-		pollTime = std::chrono::duration<double>(pollPoint - now).count();
-		updateTime = std::chrono::duration<double>(updatePoint - pollPoint).count();
-		drawTime = std::chrono::duration<double>(drawPoint - updatePoint).count();
+		pollTime = pollPoint - now;
+		updateTime = updatePoint - pollPoint;
+		drawTime = drawPoint - updatePoint;
 
 		GestureDetector::g_keys.clear();
 		GestureDetector::g_textInput = 0;
@@ -184,6 +194,16 @@ void Screen::init_direct2d() {
 
 Screen *Screen::getCurrentScreen() {
 	return currentScreen;
+}
+
+Color Screen::getSystemAccentColor() {
+	return systemAccentColor;
+}
+
+std::tuple<GLFWwindow *, ID2D1HwndRenderTarget *, ID2D1Factory *, IDWriteFactory *> getTools() {
+	auto screen = Screen::getCurrentScreen();
+
+	return {screen->window, screen->canvas, screen->factory, screen->textFactory};
 }
 
 void Screen::customUpdate() {

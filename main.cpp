@@ -68,48 +68,48 @@ int main() {
 	//		}),
 	//	}));
 
-	screen.setChild(new ScrollableWithScrollbar(ScrollableArgs{
-		.data{
-			.expand = Axis::both,
-		},
-		.children {
-			new Box(BoxArgs{
-				.data {
-					.size{300},
-					.margin{0, 0, 0, 5},
-				},
-				.color {0, 0.5, 1},
-			}),
-			new Box(BoxArgs{
-				.data {
-					.size{300},
-					.margin{0, 0, 0, 5},
-				},
-				.color {0, 0.6, 1},
-			}),
-			new Box(BoxArgs{
-				.data {
-					.size{300},
-					.margin{0, 0, 0, 5},
-				},
-				.color {0, 0.7, 1},
-			}),
-			new Box(BoxArgs{
-				.data {
-					.size{300},
-					.margin{0, 0, 0, 5},
-				},
-				.color {0, 0.8, 1},
-			}),
-			new Box(BoxArgs{
-				.data {
-					.size{300},
-					.margin{0, 0, 0, 5},
-				},
-				.color {0, 0.9, 1},
-			}),
-		},
-	}));
+	// screen.setChild(new ScrollableWithScrollbar(ScrollableArgs{
+	// 	.data{
+	// 		.expand = Axis::both,
+	// 	},
+	// 	.children {
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.5, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.6, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.7, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.8, 1},
+	// 		}),
+	// 		new Box(BoxArgs{
+	// 			.data {
+	// 				.size{300},
+	// 				.margin{0, 0, 0, 5},
+	// 			},
+	// 			.color {0, 0.9, 1},
+	// 		}),
+	// 	},
+	// }));
 
 	// std::shared_ptr<Key> kk = std::make_shared<Key>();
 
@@ -175,11 +175,6 @@ int main() {
 	// 	.data{
 	// 		.key{k},
 	// 		.size{100},
-	// 		.transition{
-	// 			.enabled = true,
-	// 			.duration = 200,
-	// 			.curve = TransitionCurves::easeInOut,
-	// 		},
 	// 	},
 	// 	.onClick = [&](){
 	// 		static bool s = false;
@@ -194,12 +189,12 @@ int main() {
 	// 		s = !s;
 	// 	},
 	// }));
-	//	screen.setChild(new TextBox(TextBoxArgs{
-	//		.data {
-	//			.margin{4},
-	//			.expand = squi::Axis::horizontal,
-	//		},
-	//	}));
+		screen.setChild(new TextBox(TextBoxArgs{
+			.data {
+				.margin{4},
+				.expand = squi::Axis::horizontal,
+			},
+		}));
 
 	screen.run();
 	return 0;

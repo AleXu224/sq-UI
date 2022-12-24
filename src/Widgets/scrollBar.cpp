@@ -16,7 +16,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 			.expand = Axis::vertical,
 			.transition{
 				.enabled = true,
-				.duration = 200,
+				.duration = 200ms,
 				.curve = TransitionCurves::easeInOut,
 			},
 		},
@@ -29,7 +29,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 				.size{6},
 				.transition{
 					.enabled = true,
-					.duration = 200,
+					.duration = 200ms,
 					.curve = TransitionCurves::easeInOut,
 				},
 			},
@@ -42,18 +42,15 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 	auto bgWidget = bgKey->getAs<Box>();
 	auto &bgTransition = bgWidget->getTransition();
 	bgTransition.clear();
-	bgTransition.addWatch(bgWidget->getData().size.x);
-	bgTransition.addWatch(bgWidget->color.r);
-	bgTransition.addWatch(bgWidget->color.g);
-	bgTransition.addWatch(bgWidget->color.b);
-	bgTransition.addWatch(bgWidget->color.a);
-	bgTransition.addWatch(bgWidget->getData().padding.left);
-	bgTransition.addWatch(bgWidget->getData().padding.right);
+	bgTransition.addWatch(&bgWidget->getData().size.x);
+	bgTransition.addWatch(&bgWidget->color);
+	bgTransition.addWatch(&bgWidget->getData().padding.left);
+	bgTransition.addWatch(&bgWidget->getData().padding.right);
 
 	auto thumbWidget = thumbKey->getAs<Box>();
 	auto &thumbTransition = thumbWidget->getTransition();
 	thumbTransition.clear();
-	thumbTransition.addWatch(thumbWidget->getData().size.x);
+	thumbTransition.addWatch(&thumbWidget->getData().size.x);
 }
 
 void ScrollBar::updateFromScrollable() {

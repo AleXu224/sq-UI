@@ -1,10 +1,19 @@
 #include "../../include/Widgets/CustomButton.hpp"
 
+#include "../../include/screen.hpp"
+
 using namespace squi;
 
 CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetContentType::invisibleWithChild), style(args.style) {
 	setChild(new Box(BoxArgs{
-		.data{args.data.withKey(boxKey)},
+		.data{
+			.key{boxKey},
+			.transition{
+				.enabled = true,
+				.duration = 200ms,
+				.curve = TransitionCurves::easeInOut,
+			},
+		},
 		.color{Color::fromHexRGB("60CDFF")},
 		.borderRadius = 4,
 		.shouldUpdateGestureDetector = true,
@@ -15,6 +24,11 @@ CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetCont
 			.child = args.child,
 		}),
 	}));
+
+	auto boxWidget = boxKey->getAs<Box>();
+	boxWidget->getTransition().only(TransitionValues{
+		&boxWidget->color
+	});
 }
 
 void CustomButton::updateBeforeChild() {
@@ -22,10 +36,10 @@ void CustomButton::updateBeforeChild() {
 	auto boxGD = boxWidget->getGD();
 
 	if (boxGD.focused) {
-		boxWidget->color = style.pressColor;
+		boxWidget->color = Screen::getSystemAccentColor().withAlpha(0.8);
 	} else if (boxGD.hovered) {
-		boxWidget->color = style.hoverColor;
+		boxWidget->color = Screen::getSystemAccentColor().withAlpha(0.9);
 	} else {
-		boxWidget->color = style.color;
+		boxWidget->color = Screen::getSystemAccentColor();
 	}
 }

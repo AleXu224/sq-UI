@@ -24,6 +24,8 @@ namespace squi {
 		void draw() override;
 
 		bool isAnimationRunning = false;
+
+		static Color systemAccentColor;
 	public:
 		GLFWwindow *window = nullptr;
 		ID2D1HwndRenderTarget *canvas = nullptr;
@@ -31,10 +33,10 @@ namespace squi {
 //		IDWriteFactory5 *textFactory = nullptr;
 		IDWriteFactory *textFactory = nullptr;
 		// Time in seconds between frames
-		double deltaTime = 1;
-		double pollTime = 1;
-		double updateTime = 1;
-		double drawTime = 1;
+		std::chrono::duration<float> deltaTime = 1ms;
+		std::chrono::duration<float> pollTime = 1ms;
+		std::chrono::duration<float> updateTime = 1ms;
+		std::chrono::duration<float> drawTime = 1ms;
 		Screen();
 
 		void run();
@@ -44,6 +46,10 @@ namespace squi {
 		void animationRunning();
 
 		static Screen *getCurrentScreen();
+
+		static Color getSystemAccentColor();
+
+		static std::tuple<GLFWwindow*, ID2D1HwndRenderTarget*, ID2D1Factory*, IDWriteFactory *> getTools();
 	};
 }// namespace squi
 

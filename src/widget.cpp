@@ -157,20 +157,27 @@ void Widget::setChildren(std::vector<std::shared_ptr<Widget>> c) {
 
 void Widget::shrinkWrapWidget() {
 	auto padding = getPadding().getHorizontalVectical();
-	if (getData().shrinkWrap == Axis::horizontal || getData().shrinkWrap == Axis::both)
-		getData().size.x = m_child->getLayoutSize().x + padding.x;
+	auto &data = getData();
+	if (sizeHint.x == -1)
+		if (data.expand != Axis::horizontal && data.expand != Axis::both)
+			if (data.shrinkWrap == Axis::horizontal || data.shrinkWrap == Axis::both)
+				data.size.x = m_child->getLayoutSize().x + padding.x;
 
-	if (getData().shrinkWrap == Axis::vertical || getData().shrinkWrap == Axis::both)
-		getData().size.y = m_child->getLayoutSize().y + padding.y;
+	if (sizeHint.y == -1)
+		if (data.expand != Axis::vertical && data.expand != Axis::both)
+			if (data.shrinkWrap == Axis::vertical || data.shrinkWrap == Axis::both)
+				data.size.y = m_child->getLayoutSize().y + padding.y;
 }
 
 void Widget::expandWidget() {
 	auto margin = getMargin().getHorizontalVectical();
-	if (getData().expand == Axis::horizontal || getData().expand == Axis::both)
-		getData().size.x = m_parent->getContentSize().x - margin.x;
+	if (sizeHint.x == -1)
+		if (getData().expand == Axis::horizontal || getData().expand == Axis::both)
+			getData().size.x = m_parent->getContentSize().x - margin.x;
 
-	if (getData().expand == Axis::vertical || getData().expand == Axis::both)
-		getData().size.y = m_parent->getContentSize().y - margin.y;
+	if (sizeHint.y == -1)
+		if (getData().expand == Axis::vertical || getData().expand == Axis::both)
+			getData().size.y = m_parent->getContentSize().y - margin.y;
 }
 
 void Widget::getHintedSize() {
@@ -198,15 +205,15 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 			return;
 		}
 		case WidgetContentType::singleChild: {
-			if (m_child) {
-				m_child->setParent(this);
-				shrinkWrapWidget();
-			}
 			if (m_parent != nullptr) expandWidget();
 			getHintedSize();
 
 			updateBeforeChild();
-			if (m_child) m_child->update();
+			if (m_child) {
+				m_child->setParent(this);
+				m_child->update();
+				shrinkWrapWidget();
+			}
 			updateAfterChild();
 			transition.update();
 			
@@ -371,18 +378,10 @@ WidgetData WidgetData::withTransition(const TransitionArgs &newTransition) const
 }
 
 void WidgetData::initializeTransition(Transition &transition) {
-	transition.addWatch(size.x);
-	transition.addWatch(size.y);
-
-	transition.addWatch(margin.top);
-	transition.addWatch(margin.right);
-	transition.addWatch(margin.bottom);
-	transition.addWatch(margin.left);
-
-	transition.addWatch(padding.top);
-	transition.addWatch(padding.right);
-	transition.addWatch(padding.bottom);
-	transition.addWatch(padding.left);
+	transition.addWatch(TransitionValues{&size, &margin, &padding});
+	// transition.addWatch(&size);
+	// transition.addWatch(&margin);
+	// transition.addWatch(&padding);
 }
 
 void WidgetData::overrideFrom(const WidgetData &rhs) {

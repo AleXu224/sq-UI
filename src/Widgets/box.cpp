@@ -19,19 +19,9 @@ Box::Box(const BoxArgs &args) : Widget(args.data, WidgetContentType::singleChild
 
 	auto &transition = getTransition();
 
-	transition.addWatch(color.r);
-	transition.addWatch(color.g);
-	transition.addWatch(color.b);
-	transition.addWatch(color.a);
+	transition.addWatch(&color);
 
-	transition.addWatch(border.color.r);
-	transition.addWatch(border.color.g);
-	transition.addWatch(border.color.b);
-	transition.addWatch(border.color.a);
-
-	transition.addWatch(border.size);
-
-	transition.addWatch(borderRadius);
+	transition.addWatch(&border);
 }
 
 void Box::updateBeforeChild() {

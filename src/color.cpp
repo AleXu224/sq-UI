@@ -102,3 +102,11 @@ Color &Color::withAlpha(const float &newAlpha) {
 	a = newAlpha;
 	return *this;
 }
+
+bool Color::isDark() const {
+	return ((r * 0.299f) + (g * 0.587f) + (b * 0.114f)) > 0.55 ? false : true;
+}
+
+bool Color::operator==(const Color &other) const {
+	return r == other.r && g == other.g && b == other.b && a == other.a;
+}

@@ -24,6 +24,10 @@ public:
 	static Color fromHexRGB(std::string hex);
 	static Color fromHexRGBA(std::string hex);
 
+	bool isDark() const;
+
+	bool operator==(const Color &other) const;
+
 	operator _D3DCOLORVALUE() const;
 };
 

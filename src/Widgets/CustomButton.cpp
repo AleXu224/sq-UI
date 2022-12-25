@@ -9,7 +9,6 @@ CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetCont
 		.data{
 			.key{boxKey},
 			.transition{
-				.enabled = true,
 				.duration = 200ms,
 				.curve = TransitionCurves::easeInOut,
 			},

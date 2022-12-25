@@ -1,3 +1,8 @@
+// Disable the console for Release builds
+#ifdef NDEBUG
+	#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif
+
 #include "../include/screen.hpp"
 
 #define GLFW_EXPOSE_NATIVE_WIN32

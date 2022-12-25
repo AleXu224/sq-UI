@@ -15,7 +15,6 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 			.padding{3, 2},
 			.expand = Axis::vertical,
 			.transition{
-				.enabled = true,
 				.duration = 200ms,
 				.curve = TransitionCurves::easeInOut,
 			},
@@ -28,7 +27,6 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 				.key{thumbKey},
 				.size{6},
 				.transition{
-					.enabled = true,
 					.duration = 200ms,
 					.curve = TransitionCurves::easeInOut,
 				},
@@ -103,7 +101,7 @@ void ScrollBar::updateBeforeChild() {
 			dragScrollStart = scroll;
 		}
 
-		scrollable->setScroll(dragScrollStart - thumbGD.getDragOffset().y * (contentSize / availableThumbSpace));
+		scrollable->setScroll(dragScrollStart - thumbGD.getDragOffset().y * (contentSize / availableThumbSpace), true);
 	} else {
 		dragging = false;
 	}

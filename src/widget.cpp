@@ -403,7 +403,6 @@ void WidgetData::overrideFrom(const WidgetData &rhs) {
 	if (rhs.expand != defaultData.expand) expand = rhs.expand;
 	if (rhs.passThrough != defaultData.passThrough) passThrough = rhs.passThrough;
 
-	if (rhs.transition.enabled != defaultData.transition.enabled) transition.enabled = rhs.transition.enabled;
 	if (rhs.transition.duration != defaultData.transition.duration) transition.duration = rhs.transition.duration;
 	if (rhs.transition.curve.target_type() != defaultData.transition.curve.target_type()) transition.curve = rhs.transition.curve;
 }

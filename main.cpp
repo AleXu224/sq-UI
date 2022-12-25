@@ -12,6 +12,7 @@
 #include "include/Widgets/text.hpp"
 #include "include/Widgets/textBox.hpp"
 #include "include/Widgets/textInput.hpp"
+#include "include/Widgets/textButton.hpp"
 #include "include/screen.hpp"
 #include "ranges"
 
@@ -189,12 +190,25 @@ int main() {
 	// 		s = !s;
 	// 	},
 	// }));
-		screen.setChild(new TextBox(TextBoxArgs{
-			.data {
-				.margin{4},
-				.expand = squi::Axis::horizontal,
-			},
-		}));
+	
+	// screen.setChild(new TextBox(TextBoxArgs{
+	// 	.data {
+	// 		.margin{4},
+	// 		.expand = squi::Axis::horizontal,
+	// 	},
+	// }));
+
+	screen.setChild(new TextButton(TextButtonArgs{
+		.data{
+			.shrinkWrap = Axis::vertical,
+			.expand = Axis::horizontal,
+		},
+		.text{
+			.text{"Some button withh some even longer text plz work"},
+			// .maxWidth = 200,
+			.lineWrap = true,
+		},
+	}));
 
 	screen.run();
 	return 0;

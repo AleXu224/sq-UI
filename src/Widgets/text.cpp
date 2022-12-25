@@ -14,12 +14,14 @@ Text::Text(const TextArgs &args)
 	  text(args.text),
 	  fontSize(args.fontSize),
 	  fontFamily(args.fontFamily),
-	  color(args.color),
 	  lineWrap(args.lineWrap),
-	  maxWidth(args.maxWidth) {
+	  maxWidth(args.maxWidth),
+	  color(args.color) {
 	Screen::getCurrentScreen()->textFactory->CreateTextFormat(std::wstring(fontFamily.begin(), fontFamily.end()).c_str(), nullptr, (DWRITE_FONT_WEIGHT)args.weight, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fontSize, L"en-us", &format);
 	Screen::getCurrentScreen()->textFactory->CreateTextLayout(std::wstring(text.begin(), text.end()).c_str(), text.size(), format, INFINITY, 0, &layout);
 //	Screen::getCurrentScreen()->textFactory->CreateTextLayout(L"\uE115", 1, format, INFINITY, 0, &layout);
+
+	getTransition().addWatch(&color);
 }
 
 void Text::updateBeforeChild() {

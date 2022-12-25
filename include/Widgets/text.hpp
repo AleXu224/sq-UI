@@ -38,13 +38,13 @@ namespace squi {
 		std::string text;
 		float fontSize;
 		std::string fontFamily;
-		Color color;
 		bool lineWrap;
 		float maxWidth;
 		IDWriteTextFormat* format = nullptr;
 		IDWriteTextLayout *layout = nullptr;
 
 	public:
+		Color color;
 		explicit Text(const TextArgs &args);
 
 		void setText(std::string newText);

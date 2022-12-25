@@ -4,7 +4,12 @@
 
 using namespace squi;
 
-Scrollable::Scrollable(const ScrollableArgs& args) : Widget(args.data, WidgetContentType::singleChild) {
+Scrollable::Scrollable(const ScrollableArgs &args)
+	: Widget(args.data.withTransition(TransitionArgs{
+				 .duration = 100ms,
+				 .curve = TransitionCurves::easeOut,
+			 }),
+			 WidgetContentType::singleChild) {
 	// A scrollable that is shrink wrapped makes no sense and defeats the purpose of the whole widget
 	if (args.data.shrinkWrap != Axis::none) {
 		throw std::runtime_error("Cannot have a scrollable that is shrink wrapped!");
@@ -16,15 +21,27 @@ Scrollable::Scrollable(const ScrollableArgs& args) : Widget(args.data, WidgetCon
 		}},
 		.children = args.children,
 	}));
+
+	getTransition().only(TransitionValues{&scroll});
 }
 
 void Scrollable::updateBeforeChild() {
 	gd.update();
 
-	setScroll(scroll + gd.getScroll().y * -40);
+	setScroll(lastScroll + gd.getScroll().y * -40);
 }
 
-void Scrollable::setScroll(const float &newScroll) {
+void Scrollable::setScroll(const float &newScroll, bool instant) {
+	auto &transition = getTransition();
+	if (instant) {
+		getTransition().clear();
+		transitionCleared = true;
+	} else if (newScroll != lastScroll && transitionCleared) {
+		transition.only(TransitionValues{&scroll});
+		transition.update();
+		transitionCleared = false;
+	}
+
 	scroll = newScroll;
 
 	const auto &child = getChild();
@@ -33,8 +50,10 @@ void Scrollable::setScroll(const float &newScroll) {
 	const auto maxScroll = childSize.y - scrollableSize.y;
 
 	if (childSize.y < scrollableSize.y) scroll = 0;
-	else if (scroll > maxScroll) scroll = maxScroll;
+	else if (scroll > maxScroll)
+		scroll = maxScroll;
 	scroll = (std::max)(scroll, 0.f);
+	lastScroll = scroll;
 }
 
 const float &Scrollable::getScroll() const {

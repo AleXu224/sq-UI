@@ -47,7 +47,6 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 							.size{1},
 							.expand = Axis::horizontal,
 							.transition{
-								.enabled = true,
 								.duration = 200ms,
 								.curve = TransitionCurves::easeInOut,
 							}

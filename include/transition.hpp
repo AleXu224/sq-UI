@@ -1,22 +1,23 @@
 #ifndef SQ_UI_TRANSITION_HPP
 #define SQ_UI_TRANSITION_HPP
 
-#include "functional"
-#include "unordered_map"
+#include "border.hpp"
 #include "chrono"
+#include "color.hpp"
+#include "functional"
+#include "margin.hpp"
+#include "unordered_map"
 #include "variant"
 #include "vec2.hpp"
-#include "margin.hpp"
-#include "color.hpp"
-#include "border.hpp"
 
 namespace squi {
-	typedef std::vector<std::variant<float*, vec2*, Margin*, Color*, Border*>> TransitionValues;
+	typedef std::vector<std::variant<float *, vec2 *, Margin *, Color *, Border *>> TransitionValues;
 	typedef std::function<float(float t)> Curve;
 
 	struct TransitionCurves {
 		static const Curve linear;
 		static const Curve easeInOut;
+		static const Curve easeOut;
 	};
 
 	class TransitionData {
@@ -49,23 +50,19 @@ namespace squi {
 
 	using namespace std::chrono_literals;
 	struct TransitionArgs {
-		bool enabled{false};
 		std::chrono::duration<float> duration = 0ms;
 		Curve curve{TransitionCurves::linear};
 	};
 
 	class Transition {
-	private:
-		std::vector<TransitionData> watchList{};
-
 	public:
-		bool enabled;
+		std::vector<TransitionData> watchList{};
 		std::chrono::duration<float> duration;
 		Curve curve;
 
-		Transition() : enabled(false), duration(0), curve(TransitionCurves::linear) {}
+		Transition() : duration(0), curve(TransitionCurves::linear) {}
 		explicit Transition(const TransitionArgs &args)
-			: enabled(args.enabled), duration(args.duration), curve(args.curve) {}
+			: duration(args.duration), curve(args.curve) {}
 
 		void update();
 

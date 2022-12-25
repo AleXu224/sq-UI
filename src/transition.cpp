@@ -12,10 +12,12 @@ const Curve TransitionCurves::easeInOut = [](float t) {
 	return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 };
 
-TransitionData::TransitionData(float *value, std::chrono::duration<float> &duration, Curve &curve)
-	: value(value),
-	  duration(duration),
-	  curve(curve) {}
+const Curve TransitionCurves::easeOut = [](float t) {
+	return 1 - (1 - t) * (1 - t) * (1 - t);
+};
+
+TransitionData::TransitionData(float *value, std::chrono::duration<float> &duration, Curve &curve) : value(value),
+			duration(duration), curve(curve) {}
 
 void TransitionData::to(const float &newValue) {
 	if (newValue == targetValue && *value == targetValue) return;
@@ -39,7 +41,8 @@ void TransitionData::update() {
 	Screen::getCurrentScreen()->animationRunning();
 
 	// If the value was changed outside of the transition then update the target value
-	if (*value != setValue) to(*value);
+	float newValue = *value;
+	
 
 	if (duration == 0ms)
 		progress = 1;
@@ -52,8 +55,11 @@ void TransitionData::update() {
 	// Floating point errors can cause the value to be slightly off from the target value
 	// And this can cause the transition to never finish
 	if (progress >= 1) *value = targetValue;
-	else *value = startValue + (targetValue - startValue) * curve(progress);
+	else
+		*value = startValue + (targetValue - startValue) * curve(progress);
 	setValue = *value;
+
+	if (newValue != setValue && newValue != targetValue) to(newValue);
 }
 
 bool TransitionData::isFinised() {
@@ -61,7 +67,7 @@ bool TransitionData::isFinised() {
 }
 
 void Transition::update() {
-	if (!enabled) return;
+	if (duration.count() <= 0.f) return;
 
 	for (auto &transition: watchList) {
 		transition.update();

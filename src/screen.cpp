@@ -14,8 +14,6 @@
 #include "format"
 #include "ranges"
 
-#include "winrt/windows.ui.viewmanagement.h"
-
 using namespace squi;
 
 Screen *Screen::currentScreen = nullptr;
@@ -65,11 +63,14 @@ void Screen::run() {
 		auto pollPoint = std::chrono::high_resolution_clock::now();
 
 		// Get the system accent accent color;
-		using namespace winrt;
-		using namespace Windows::UI::ViewManagement;
-		UISettings const ui_settings{};
-		auto const accent_color{ui_settings.GetColorValue(UIColorType::Accent)};
-		systemAccentColor = Color::fromRGB255(accent_color.R, accent_color.G, accent_color.B);
+		COLORREF dwAccentRGB;
+		BOOL bIsColorOpaque;
+		DwmGetColorizationColor(&dwAccentRGB, &bIsColorOpaque);
+		auto alpha = (dwAccentRGB >> 24) & 0xFF;
+		auto red = ((dwAccentRGB >> 16) & 0xFF) * ((float)alpha / 255.f) + (255 - alpha);
+		auto green = ((dwAccentRGB >> 8) & 0xFF) * ((float)alpha / 255.f) + (255 - alpha);
+		auto blue = (dwAccentRGB & 0xFF) * ((float)alpha / 255.f) + (255 - alpha);
+		systemAccentColor = Color::fromRGB255(red, green, blue);
 
 		update();
 		auto updatePoint = std::chrono::high_resolution_clock::now();

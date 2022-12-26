@@ -17,7 +17,8 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 	setChild(new Column(ColumnArgs{
 		.data{WidgetData{
 			.key{columnKey},
-			.shrinkWrap = Axis::both,
+			.shrinkWrap = Axis::vertical,
+			.expand = Axis::horizontal,
 		}},
 		.children = args.children,
 	}));

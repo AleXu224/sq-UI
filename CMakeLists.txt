@@ -17,6 +17,8 @@ file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "include/*.h")
 
 # For release
 add_library(sq_UI ${all_files})
+target_include_directories(sq_UI PUBLIC include)
+target_include_directories(sq_UI PUBLIC include/Widgets)
 
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(sq_UI PUBLIC glfw)

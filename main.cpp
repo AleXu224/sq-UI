@@ -199,20 +199,42 @@ int main() {
 	// 	},
 	// }));
 
-	screen.setChild(TextButton(TextButtonArgs{
-		.data{
-			.shrinkWrap = Axis::vertical,
-			.expand = Axis::horizontal,
-		},
-		.text{
-			.text{"Some button withh some even longer text plz work"},
-			// .maxWidth = 200,
-			.lineWrap = true,
-		},
-	}));
-
-	// screen.setChild(new TopNav(TopNavArgs{
+	// screen.setChild(TextButton(TextButtonArgs{
+	// 	.data{
+	// 		.shrinkWrap = Axis::vertical,
+	// 		.expand = Axis::horizontal,
+	// 	},
+	// 	.text{
+	// 		.text{"Some button withh some even longer text plz work"},
+	// 		// .maxWidth = 200,
+	// 		.lineWrap = true,
+	// 	},
 	// }));
+
+	screen.setChild(TopNav(TopNavArgs{
+		.tabs{
+			TopNavTab{
+				.name{"Tab 1"},
+				.child = Text(TextArgs{
+					.text{"Tab 1"},
+				}),
+			},
+			TopNavTab{
+				.name{"Tab 2"},
+				.child = Text(TextArgs{
+					.text{"Tab 2"},
+				}),
+			},
+			TopNavTab{
+				.name{"Tab 3 With some extra text"},
+				.child = Box(BoxArgs{
+					.data{
+						.size{50},
+					},
+					.color{0, 1, 1},
+				}),
+			},
+		}}));
 
 	screen.run();
 	return 0;

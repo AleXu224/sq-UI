@@ -43,10 +43,17 @@ namespace squi {
 
 	public:
 		Children() = default;
+		Children(std::vector<std::shared_ptr<Widget>> children) : m_children(children) {}
+		Children(Children &children) : m_children(children.m_children) {}
+		Children(const Children &children) : m_children(children.m_children) {}
 
 		template<typename... T>
 		Children(T &&...children) : m_children{std::make_shared<T>(std::move(children))...} {
 			static_assert((std::is_base_of<Widget, T>::value && ...), "Children must be Widgets");
+		}
+
+		void add(Child child) {
+			m_children.push_back(child);
 		}
 
 		operator std::vector<std::shared_ptr<Widget>>() const {

@@ -13,10 +13,10 @@ file(GLOB_RECURSE all_files CONFIGURE_DEPENDS "src/*.cpp" "include/*.h")
 
 
 # For debugging
-add_executable(sq_UI main.cpp ${all_files})
+# add_executable(sq_UI main.cpp ${all_files})
 
 # For release
-# add_library(sq_UI ${all_files})
+add_library(sq_UI ${all_files})
 target_include_directories(sq_UI PUBLIC include)
 target_include_directories(sq_UI PUBLIC include/Widgets)
 

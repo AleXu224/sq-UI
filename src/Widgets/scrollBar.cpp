@@ -8,7 +8,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 	: Widget(args.data,
 			 WidgetContentType::invisibleWithChild),
 	  scrollableKey(args.scrollableKey) {
-	setChild(new Box(BoxArgs{
+	setChild(Box(BoxArgs{
 		.data{
 			.key{bgKey},
 			.size{12},
@@ -22,7 +22,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 		.color{bgColorInactive},
 		.borderRadius = 6,
 		.shouldUpdateGestureDetector = true,
-		.child = new Box(BoxArgs{
+		.child = Box(BoxArgs{
 			.data{
 				.key{thumbKey},
 				.size{6},

@@ -111,17 +111,6 @@ const WidgetContentType &Widget::getChildCountType() const {
 	return contentType;
 }
 
-void Widget::setChild(Widget *c) {
-	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
-		throw std::runtime_error("Child is not of singleChild contentType");
-
-	auto &child = getChild();
-	child.reset(c);
-	if (contentType == WidgetContentType::invisibleWithChild && child) {
-		child->overrideData(m_data);
-	}
-}
-
 void Widget::setChild(std::shared_ptr<Widget> c) {
 	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
 		throw std::runtime_error("Child is not of singleChild contentType");
@@ -132,21 +121,14 @@ void Widget::setChild(std::shared_ptr<Widget> c) {
 	}
 }
 
-std::vector<std::shared_ptr<Widget>> Widget::childrenFromPointers(const std::vector<Widget *> &children) {
-	std::vector<std::shared_ptr<Widget>> ret{};
-	ret.reserve(children.size());
+void Widget::setChild(const Child &child) {
+	if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
+		throw std::runtime_error("Child is not of singleChild contentType");
 
-	for (auto *child: children) {
-		ret.push_back(std::shared_ptr<Widget>(child));
+	m_child = child;
+	if (contentType == WidgetContentType::invisibleWithChild && m_child) {
+		m_child->overrideData(m_data);
 	}
-
-	return ret;
-}
-
-void Widget::setChildren(const std::vector<Widget *> &c) {
-	if (contentType != WidgetContentType::multipleChildren) throw std::runtime_error("Child is not of multipleChildren contentType");
-
-	m_children = childrenFromPointers(c);
 }
 
 void Widget::setChildren(std::vector<std::shared_ptr<Widget>> c) {

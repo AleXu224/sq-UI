@@ -12,13 +12,13 @@ TextButton::TextButton(const TextButtonArgs &args) : Widget(args.data, WidgetCon
 		.curve = TransitionCurves::easeInOut,
 	};
 	
-	setChild(new CustomButton(CustomButtonArgs{
+	setChild(CustomButton(CustomButtonArgs{
 		.data{
 			.padding{12, 7},
 			.shrinkWrap = Axis::both,
 		},
 		.onClick = args.onClick,
-		.child = new Text(textArgs),
+		.child = Text(textArgs),
 	}));
 
 	auto textWidget = textKey->getAs<Text>();

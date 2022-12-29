@@ -7,7 +7,7 @@
 namespace squi {
 	struct ScrollableArgs {
 		WidgetData data{};
-		std::vector<Widget *> children{};
+		Children children{};
 	};
 
 	class Scrollable : public Widget {

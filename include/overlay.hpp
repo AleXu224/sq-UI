@@ -6,7 +6,7 @@
 namespace squi {
 	struct OverlayArgs {
 		WidgetData data{};
-		std::vector<Widget *> children{};
+		Children children{};
 	};
 
 	class Overlay : public Widget {
@@ -15,7 +15,7 @@ namespace squi {
 		bool canClose = false;
 
 		explicit Overlay(const OverlayArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
-			setChild(new Stack(StackArgs{
+			setChild(Stack(StackArgs{
 				.children{args.children},
 			}));
 		}

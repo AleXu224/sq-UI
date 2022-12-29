@@ -13,6 +13,7 @@
 #include "include/Widgets/textBox.hpp"
 #include "include/Widgets/textInput.hpp"
 #include "include/Widgets/textButton.hpp"
+#include "include/Widgets/topnav.hpp"
 #include "include/screen.hpp"
 #include "ranges"
 
@@ -198,7 +199,7 @@ int main() {
 	// 	},
 	// }));
 
-	screen.setChild(new TextButton(TextButtonArgs{
+	screen.setChild(TextButton(TextButtonArgs{
 		.data{
 			.shrinkWrap = Axis::vertical,
 			.expand = Axis::horizontal,
@@ -209,6 +210,9 @@ int main() {
 			.lineWrap = true,
 		},
 	}));
+
+	// screen.setChild(new TopNav(TopNavArgs{
+	// }));
 
 	screen.run();
 	return 0;

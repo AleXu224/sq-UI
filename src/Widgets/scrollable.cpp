@@ -14,7 +14,7 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 	if (args.data.shrinkWrap != Axis::none) {
 		throw std::runtime_error("Cannot have a scrollable that is shrink wrapped!");
 	}
-	setChild(new Column(ColumnArgs{
+	setChild(Column(ColumnArgs{
 		.data{WidgetData{
 			.key{columnKey},
 			.shrinkWrap = Axis::vertical,

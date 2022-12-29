@@ -14,7 +14,7 @@ namespace squi {
 		WidgetData data{};
 		RowAlignment alignment = RowAlignment::top;
 		float spaceBetween = 0;
-		std::vector<Widget *> children{};
+		Children children{};
 	};
 
 	class Row : public Widget {

@@ -16,7 +16,7 @@ namespace squi {
 		WidgetData data{};
 		ButtonStyle style{};
 		std::function<void()> onClick{};
-		Widget *child = nullptr;
+		Child child{};
 	};
 
 	class CustomButton : public Widget {

@@ -40,8 +40,8 @@ namespace squi {
 		std::string fontFamily;
 		bool lineWrap;
 		float maxWidth;
-		IDWriteTextFormat* format = nullptr;
-		IDWriteTextLayout *layout = nullptr;
+		std::shared_ptr<IDWriteTextFormat> format{};
+		std::shared_ptr<IDWriteTextLayout> layout{};
 
 	public:
 		Color color;
@@ -54,8 +54,6 @@ namespace squi {
 		void updateBeforeChild() override;
 
 		void draw() override;
-
-		~Text() override;
 	};
 }// namespace squi
 

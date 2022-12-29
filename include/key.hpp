@@ -3,7 +3,7 @@
 
 #include "stdexcept"
 #include "type_traits"
-#include "memory"
+#include "vector"
 
 namespace squi {
 	class Widget;
@@ -11,51 +11,42 @@ namespace squi {
 
 namespace squi {
 	class Key {
-		bool isExpired = false;
-		bool isInitialized = false;
-		Widget *widget = nullptr;
+		std::vector<Widget *> instances{};
 
 	public:
 		template<typename T>
 		[[nodiscard]] T *getAs() const {
+
 			static_assert(std::is_base_of<Widget, T>::value, "T must be a widget");
-			if (isInitialized && !isExpired) {
-				return dynamic_cast<T *>(widget);
-			} else {
-				if (!isInitialized) throw std::runtime_error("Key has not been intialized yet, can't get value");
-				throw std::runtime_error("Key has expired, can't return content");
-			}
+			if (instances.empty())
+				throw std::runtime_error("Key has not been initialized yet or has expired");
+			if (instances.size() == 1)
+				return dynamic_cast<T *>(instances.at(0));
+			else
+				throw std::runtime_error("Widget has more than 1 instance, can't return content");
 		};
 
 		[[nodiscard]] Widget *get() const {
-			if (isInitialized && !isExpired) {
-				return widget;
-			} else {
-				if (!isInitialized) throw std::runtime_error("Key has not been intialized yet, can't get value");
-				throw std::runtime_error("Key has expired, can't return content");
-			}
+			if (instances.empty())
+				throw std::runtime_error("Key has not been initialized yet or has expired");
+			if (instances.size() == 1)
+				return instances.at(0);
+			else
+				throw std::runtime_error("Widget has more than 1 instance, can't return content");
 		};
 
 		void set(Widget *newWidget) {
-			if (!isInitialized && !isExpired) {
-				widget = newWidget;
-				isInitialized = true;
-			} else {
-				if (isExpired) throw std::runtime_error("Can't set the value of an expired key");
-				printf("WARNING: trying to set the value of an already set Key");
-			}
+			if (std::find(instances.begin(), instances.end(), newWidget) != instances.end())
+				throw std::runtime_error("Key has already been set to this widget");
+
+			instances.push_back(newWidget);
 		}
 
-		void markExpired() {
-			isExpired = true;
-		}
+		void remove(Widget *widget) {
+			if (std::find(instances.begin(), instances.end(), widget) == instances.end())
+				throw std::runtime_error("Key has not been set to this widget");
 
-		[[nodiscard]] bool isKeyExpired() const {
-			return isExpired;
-		}
-
-		[[nodiscard]] bool isKeyInitialized() const {
-			return isInitialized;
+			instances.erase(std::remove(instances.begin(), instances.end(), widget), instances.end());
 		}
 	};
 }// namespace squi

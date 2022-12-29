@@ -6,7 +6,7 @@
 namespace squi {
 	struct StackArgs {
 		const WidgetData& data{};
-		std::vector<Widget *> children{};
+		Children children{};
 	};
 
 	class Stack : public Widget {

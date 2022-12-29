@@ -14,7 +14,7 @@ TextInput::TextInput(const TextInputArgs &args)
 		  .color{args.textArgs.color},
 	  })) {
 
-	setChild(new Text(TextArgs{
+	setChild(Text(TextArgs{
 		.fontSize = args.textArgs.fontSize,
 		.fontFamily{args.textArgs.fontFamily},
 		.weight = args.textArgs.weight,

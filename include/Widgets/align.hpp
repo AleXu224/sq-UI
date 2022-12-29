@@ -7,7 +7,7 @@ namespace squi {
 	struct AlignArgs {
 		WidgetData data{};
 		vec2 alignment{0.5};
-		Widget *child = nullptr;
+		Child child{};
 	};
 
 	class Align : public Widget {

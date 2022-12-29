@@ -7,7 +7,7 @@
 using namespace squi;
 
 TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
-	setChild(new Box{BoxArgs{
+	setChild(Box{BoxArgs{
 		// Force shrinkwrap to be verical at the very least in order to properly fit the text
 		.data{
 			.key{boxKey},
@@ -22,10 +22,10 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 		},
 		.shouldUpdateGestureDetector = true,
 		.shouldClipContents = true,
-		.child = new Stack(StackArgs{
+		.child = Stack(StackArgs{
 			.children = {
-				new Align(AlignArgs{
-					.child = new TextInput(TextInputArgs{
+				Align(AlignArgs{
+					.child = TextInput(TextInputArgs{
 						.data{
 							.key{textInputKey},
 							.margin{12, 12, 0, 0},
@@ -39,9 +39,9 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 						},
 					}),
 				}),
-				new Align(AlignArgs{
+				Align(AlignArgs{
 					.alignment{0, 1},
-					.child = new Box(BoxArgs{
+					.child = Box(BoxArgs{
 						.data{
 							.key{underlineKey},
 							.size{1},

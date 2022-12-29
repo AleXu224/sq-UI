@@ -19,7 +19,7 @@ namespace squi {
 		std::function<void(GestureDetector *)> onEnter{};
 		std::function<void(GestureDetector *)> onLeave{};
 		std::function<void(GestureDetector *)> onClick{};
-		Widget *child = nullptr;
+		Child child{};
 	};
 
 	class Box : public Widget {

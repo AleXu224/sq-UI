@@ -5,6 +5,7 @@
 
 #include "key.hpp"
 #include "margin.hpp"
+#include "child.hpp"
 #include "memory"
 #include "rect.hpp"
 #include "transition.hpp"
@@ -123,8 +124,23 @@ namespace squi {
 			++instances;
 		}
 
-		Widget(const Widget &) = delete;
-		Widget(Widget &&) = delete;
+		Widget(Widget &) = delete;
+		// Move constructor needed since a move constructor is called
+		// when creating a shared_ptr of a widget from an rvalue.
+		// Fun fact: when the move constructor is deleted the 
+		// copy constrctor is called instead.
+		// This surely didn't cause me a lot of headaches
+		Widget(Widget &&other) : m_data(std::move(other.m_data)), contentType(std::move(other.contentType)) {
+			this->m_data.key->set(this);
+			this->m_pos = std::move(other.m_pos);
+			this->m_parent = std::move(other.m_parent);
+			this->sizeHint = std::move(other.sizeHint);
+			this->m_child = std::move(other.m_child);
+			this->m_children = std::move(other.m_children);
+			this->transition = Transition(this->m_data.transition);
+			this->m_data.initializeTransition(transition);
+			++instances;
+		};
 
 		[[nodiscard]] WidgetData &getData();
 		[[nodiscard]] const WidgetData &getData() const;
@@ -162,13 +178,21 @@ namespace squi {
 		virtual void setPadding(const Margin &m);
 		virtual void setParent(Widget *p);
 		virtual void setSizeHint(const vec2 &s);
-		void setChild(Widget *c);
 		void setChild(std::shared_ptr<Widget> c);
-		void setChildren(const std::vector<Widget *> &c);
+		void setChild(const Child &child);
+		template <typename T>
+		void setChild(T &&child) {
+			if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
+				throw std::runtime_error("Child is not of singleChild contentType");
+
+			auto a = std::make_shared<T>(std::move(child));
+			m_child = a;
+			if (contentType == WidgetContentType::invisibleWithChild && m_child) {
+				m_child->overrideData(m_data);
+			}
+		}
 		void setChildren(std::vector<std::shared_ptr<Widget>> c);
 		void setPassThrough(const bool &p);
-
-		[[nodiscard]] static std::vector<std::shared_ptr<Widget>> childrenFromPointers(const std::vector<Widget *> &children);
 
 		void update();
 		virtual void customUpdate();
@@ -177,7 +201,7 @@ namespace squi {
 		virtual void draw();
 
 		virtual ~Widget() {
-			this->m_data.key->markExpired();
+			this->m_data.key->remove(this);
 			--instances;
 		}
 

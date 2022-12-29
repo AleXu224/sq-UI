@@ -5,7 +5,7 @@
 using namespace squi;
 
 CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetContentType::invisibleWithChild), style(args.style) {
-	setChild(new Box(BoxArgs{
+	setChild(Box(BoxArgs{
 		.data{
 			.key{boxKey},
 			.transition{
@@ -19,7 +19,7 @@ CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetCont
 		.onClick = [oc = args.onClick](GestureDetector *gd) {
 			if (oc) oc();
 		},
-		.child = new Align(AlignArgs{
+		.child = Align(AlignArgs{
 			.child = args.child,
 		}),
 	}));

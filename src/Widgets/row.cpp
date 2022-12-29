@@ -31,10 +31,10 @@ void Row::customUpdate() {
 	spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
 	if (shrinkWrap == Axis::horizontal || shrinkWrap == Axis::both) {
 		if (!expandedChildren.empty()) throw std::runtime_error("Can't shrinkWrap when there are expanded children");
-		setSize(getSize().withX(totalChildrenWidth + spaceBetweenOffset));
+		setSize(getSize().withX(totalChildrenWidth + spaceBetweenOffset + getPadding().getHorizontalVectical().x));
 	}
 	if (shrinkWrap == Axis::vertical || shrinkWrap == Axis::both) {
-		setSize(getSize().withY(maxHeight));
+		setSize(getSize().withY(maxHeight + getPadding().getHorizontalVectical().y));
 	}
 
 	auto expand = getExpand();
@@ -57,7 +57,7 @@ void Row::customUpdate() {
 }
 
 void Row::draw() {
-	auto pos = getPos() + getMargin().getTopLeft();
+	auto pos = getPos() + getMargin().getTopLeft() + getPadding().getTopLeft();
 
 	auto children = getChildren();
 	vec2 cursor{0};

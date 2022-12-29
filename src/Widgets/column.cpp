@@ -28,13 +28,13 @@ void Column::customUpdate() {
 
 	auto shrinkWrap = getShrinkWrap();
 	if (shrinkWrap == Axis::horizontal || shrinkWrap == Axis::both) {
-		setSize(getSize().withX(maxWidth));
+		setSize(getSize().withX(maxWidth + getPadding().getHorizontalVectical().x));
 	}
 	float spaceBetweenOffset = spaceBetween * static_cast<float>(children.size() - 1);
 	spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
 	if (shrinkWrap == Axis::vertical || shrinkWrap == Axis::both) {
 		if (!expandedChildren.empty()) throw std::runtime_error("Can't shrinkWrap when there are expanded children");
-		setSize(getSize().withY(totalChildrenHeight + spaceBetweenOffset));
+		setSize(getSize().withY(totalChildrenHeight + spaceBetweenOffset + getPadding().getHorizontalVectical().y));
 	}
 
 	auto expand = getExpand();

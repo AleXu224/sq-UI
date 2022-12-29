@@ -183,7 +183,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 			expandWidget();
 			getHintedSize();
 			updateBeforeChild();
-			transition.update();
+			transition.update(getKey());
 			return;
 		}
 		case WidgetContentType::singleChild: {
@@ -197,7 +197,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 				shrinkWrapWidget();
 			}
 			updateAfterChild();
-			transition.update();
+			transition.update(getKey());
 			
 			return;
 		}
@@ -208,7 +208,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 				m_child->update();
 			}
 			updateAfterChild();
-			transition.update();
+			transition.update(getKey());
 			return;
 		}
 		case WidgetContentType::multipleChildren: {
@@ -222,7 +222,7 @@ void Widget::update() {// NOLINT(misc-no-recursion)
 				childPtr->update();
 			}
 			updateAfterChild();
-			transition.update();
+			transition.update(getKey());
 			return;
 		}
 	}
@@ -303,6 +303,7 @@ void Widget::setPassThrough(const bool &p) {
 
 void Widget::overrideData(const WidgetData &newData) {
 	m_data.overrideFrom(newData);
+	transition = Transition{m_data.transition};
 
 	if (contentType == WidgetContentType::invisibleWithChild) {
 		if (auto child = getChild()) {

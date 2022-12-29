@@ -8,7 +8,7 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 	: Widget(args.data,
 			 WidgetContentType::invisibleWithChild),
 	  scrollableKey(args.scrollableKey) {
-	setChild(Box(BoxArgs{
+	setChild(new Box(BoxArgs{
 		.data{
 			.key{bgKey},
 			.size{12},
@@ -17,18 +17,31 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 			.transition{
 				.duration = 200ms,
 				.curve = TransitionCurves::easeInOut,
+				.animatedValues = [](std::shared_ptr<Key> key) {
+					return TransitionValues{
+						&key->getAs<Box>()->getData().size.x,
+						&key->getAs<Box>()->color,
+						&key->getAs<Box>()->getData().padding.left,
+						&key->getAs<Box>()->getData().padding.right,
+					};
+				},
 			},
 		},
 		.color{bgColorInactive},
 		.borderRadius = 6,
 		.shouldUpdateGestureDetector = true,
-		.child = Box(BoxArgs{
+		.child = new Box(BoxArgs{
 			.data{
 				.key{thumbKey},
 				.size{6},
 				.transition{
 					.duration = 200ms,
 					.curve = TransitionCurves::easeInOut,
+					.animatedValues = [](std::shared_ptr<Key> key) {
+						return TransitionValues{
+							&key->getAs<Box>()->getData().size.x,
+						};
+					},
 				},
 			},
 			.color{thumbColor},
@@ -36,21 +49,6 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 			.shouldUpdateGestureDetector = true,
 		}),
 	}));
-}
-
-void ScrollBar::transitionInit() {
-	auto bgWidget = bgKey->getAs<Box>();
-	auto &bgTransition = bgWidget->getTransition();
-	bgTransition.clear();
-	bgTransition.addWatch(&bgWidget->getData().size.x);
-	bgTransition.addWatch(&bgWidget->color);
-	bgTransition.addWatch(&bgWidget->getData().padding.left);
-	bgTransition.addWatch(&bgWidget->getData().padding.right);
-
-	auto thumbWidget = thumbKey->getAs<Box>();
-	auto &thumbTransition = thumbWidget->getTransition();
-	thumbTransition.clear();
-	thumbTransition.addWatch(&thumbWidget->getData().size.x);
 }
 
 void ScrollBar::updateFromScrollable() {

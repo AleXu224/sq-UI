@@ -16,7 +16,7 @@ const Curve TransitionCurves::easeOut = [](float t) {
 	return 1 - (1 - t) * (1 - t) * (1 - t);
 };
 
-TransitionData::TransitionData(float *value, std::chrono::duration<float> &duration, Curve &curve) : value(value),
+TransitionData::TransitionData(float *value, std::chrono::duration<float> &duration, Curve curve) : value(value),
 			duration(duration), curve(curve) {}
 
 void TransitionData::to(const float &newValue) {
@@ -66,7 +66,12 @@ bool TransitionData::isFinised() {
 	return progress >= 1;
 }
 
-void Transition::update() {
+void Transition::update(std::shared_ptr<Key> key) {
+	if (firstUpdate && animatedValues) {
+		addWatch(animatedValues(key));
+	}
+	firstUpdate = false;
+	
 	if (duration.count() <= 0.f) return;
 
 	for (auto &transition: watchList) {

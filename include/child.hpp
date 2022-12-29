@@ -17,7 +17,7 @@ namespace squi {
 		Child(std::shared_ptr<Widget> child) : m_child(child) {}
 	
 		template<typename T>
-		Child(T &&child) : m_child(std::make_shared<T>(std::move(child))) {
+		Child(T* child) : m_child(std::shared_ptr<T>(child)) {
 			static_assert(std::is_base_of<Widget, T>::value, "Child must be a Widget");
 		}
 		template<typename T>
@@ -27,9 +27,13 @@ namespace squi {
 			return *this;
 		}
 
-
 		Child operator=(const Child &child) {
 			m_child = child.m_child;
+			return *this;
+		}
+
+		Child operator=(std::shared_ptr<Widget> child) {
+			m_child = child;
 			return *this;
 		}
 
@@ -48,7 +52,7 @@ namespace squi {
 		Children(const Children &children) : m_children(children.m_children) {}
 
 		template<typename... T>
-		Children(T &&...children) : m_children{std::make_shared<T>(std::move(children))...} {
+		Children(T *...children) : m_children{std::shared_ptr<T>(children)...} {
 			static_assert((std::is_base_of<Widget, T>::value && ...), "Children must be Widgets");
 		}
 

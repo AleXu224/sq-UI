@@ -13,7 +13,7 @@
 using namespace squi;
 
 TopNavButton::TopNavButton(const TopNavButtonArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
-    setChild(Box(BoxArgs{
+    setChild(new Box(BoxArgs{
         .data{
             .size{40},
             .shrinkWrap = Axis::horizontal,
@@ -24,26 +24,31 @@ TopNavButton::TopNavButton(const TopNavButtonArgs &args) : Widget(args.data, Wid
                 onClick();
             }
         },
-        .child = Stack(StackArgs{
+        .child = new Stack(StackArgs{
             .data {
                 .expand = Axis::both,
             },
             .children{
-                Text(TextArgs{
+                new Text(TextArgs{
                     .data{
                         .margin{12, 10},
                     },
                     .text{args.text},
                 }),
-                Align(AlignArgs{
+                new Align(AlignArgs{
                     .alignment{0.5, 1},
-                    .child = Box(BoxArgs{
+                    .child = new Box(BoxArgs{
                         .data{
                             .key{underlineKey},
                             .size{0, 3},
                             .transition {
                                 .duration = 200ms,
-                                .curve = TransitionCurves::easeInOut,
+                                .curve = TransitionCurves::easeOut,
+                                .animatedValues = [](std::shared_ptr<Key> key) {
+                                    return TransitionValues{
+                                        &key->getAs<Box>()->getData().size.x,
+                                    };
+                                },
                             },
                         },
                         .color{Screen::getSystemAccentColor()},
@@ -74,7 +79,7 @@ TopNav::TopNav(const TopNavArgs &args)
     Children tabWidgets;
     int index = 0;
     for (auto &tab : tabs) {
-        tabWidgets.add(TopNavButton(TopNavButtonArgs{
+        tabWidgets.add(new TopNavButton(TopNavButtonArgs{
             .text = tab.name,
             .onClick = [key = getKey(), index = index++]() {
                 auto widget = key->getAs<TopNav>();
@@ -87,12 +92,12 @@ TopNav::TopNav(const TopNavArgs &args)
         }));
     }
 
-	setChild(Column(ColumnArgs{
+	setChild(new Column(ColumnArgs{
 		.data{
 			.expand = Axis::both,
 		},
 		.children{
-			Row(RowArgs{
+			new Row(RowArgs{
 				.data{
                     .key{buttonsKey},
 					.padding{4},
@@ -101,14 +106,14 @@ TopNav::TopNav(const TopNavArgs &args)
 				},
 				.children{tabWidgets},
 			}),
-			Box(BoxArgs{
+			new Box(BoxArgs{
 				.data{
 					.size{1},
 					.expand = Axis::horizontal,
 				},
 				.color = Color::fromHexRGBA("#0000001A"),
 			}),
-			Box(BoxArgs{
+			new Box(BoxArgs{
 				.data{
 					.key{contentKey},
 					.expand = Axis::both,

@@ -113,37 +113,17 @@ namespace squi {
 		Widget() : m_data(WidgetData{}), contentType(WidgetContentType::none) {
 			this->m_data.key->set(this);
 			transition = Transition(this->m_data.transition);
-			this->m_data.initializeTransition(transition);
-			transitionInit();
 			++instances;
 		}
 		explicit Widget(WidgetData data, WidgetContentType contentType = WidgetContentType::none)
 			: m_data(data), contentType(contentType) {
 			m_data.key->set(this);
 			transition = Transition(m_data.transition);
-			m_data.initializeTransition(transition);
-			transitionInit();
 			++instances;
 		}
 
 		Widget(Widget &) = delete;
-		// Move constructor needed since a move constructor is called
-		// when creating a shared_ptr of a widget from an rvalue.
-		// Fun fact: when the move constructor is deleted the 
-		// copy constrctor is called instead.
-		// This surely didn't cause me a lot of headaches
-		Widget(Widget &&other) : m_data(std::move(other.m_data)), contentType(std::move(other.contentType)) {
-			this->m_data.key->set(this);
-			this->m_pos = std::move(other.m_pos);
-			this->m_parent = std::move(other.m_parent);
-			this->sizeHint = std::move(other.sizeHint);
-			this->m_child = std::move(other.m_child);
-			this->m_children = std::move(other.m_children);
-			this->transition = Transition(this->m_data.transition);
-			this->m_data.initializeTransition(transition);
-			transitionInit();
-			++instances;
-		};
+		Widget(Widget &&other) = delete;
 
 		[[nodiscard]] WidgetData &getData();
 		[[nodiscard]] const WidgetData &getData() const;
@@ -184,12 +164,11 @@ namespace squi {
 		void setChild(std::shared_ptr<Widget> c);
 		void setChild(const Child &child);
 		template <typename T>
-		void setChild(T &&child) {
+		void setChild(T* child) {
 			if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
 				throw std::runtime_error("Child is not of singleChild contentType");
 
-			auto a = std::make_shared<T>(std::move(child));
-			m_child = a;
+			m_child = std::shared_ptr<T>(child);
 			if (contentType == WidgetContentType::invisibleWithChild && m_child) {
 				m_child->overrideData(m_data);
 			}
@@ -202,8 +181,6 @@ namespace squi {
 		virtual void updateBeforeChild(){};
 		virtual void updateAfterChild(){};
 		virtual void draw();
-
-		virtual void transitionInit() {}
 
 		virtual ~Widget() {
 			this->m_data.key->remove(this);

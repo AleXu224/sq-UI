@@ -18,46 +18,46 @@ PerformanceOverlay::PerformanceOverlay()
 		  .shrinkWrap = Axis::both,
 		  .passThrough = true,
 	  }}) {
-	setChild(Align(AlignArgs{
+	setChild(new Align(AlignArgs{
 		.alignment{1},
-		.child = Box(BoxArgs{
+		.child = new Box(BoxArgs{
 			.color{0, 0, 0, 0},
-			.child = Column(ColumnArgs{
+			.child = new Column(ColumnArgs{
 				.data{
 					.shrinkWrap = Axis::both,
 				},
 				.alignment = ColumnAlignment::right,
 				.spaceBetween = 10.f,
 				.children{
-					Text(TextArgs{
+					new Text(TextArgs{
 						.data{
 							.key{fpsKey},
 						},
 						.text{"FPS"},
 						.fontSize = 17,
 					}),
-					Text(TextArgs{
+					new Text(TextArgs{
 						.data{
 							.key{pollKey},
 						},
 						.text{"POLL"},
 						.fontSize = 17,
 					}),
-					Text(TextArgs{
+					new Text(TextArgs{
 						.data{
 							.key{updateKey},
 						},
 						.text{"UPDATE"},
 						.fontSize = 17,
 					}),
-					Text(TextArgs{
+					new Text(TextArgs{
 						.data{
 							.key{drawKey},
 						},
 						.text{"DRAW"},
 						.fontSize = 17,
 					}),
-					Text(TextArgs{
+					new Text(TextArgs{
 						.data{
 							.key{instancesKey},
 						},

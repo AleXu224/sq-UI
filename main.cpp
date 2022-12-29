@@ -11,8 +11,8 @@
 #include "include/Widgets/stack.hpp"
 #include "include/Widgets/text.hpp"
 #include "include/Widgets/textBox.hpp"
-#include "include/Widgets/textInput.hpp"
 #include "include/Widgets/textButton.hpp"
+#include "include/Widgets/textInput.hpp"
 #include "include/Widgets/topnav.hpp"
 #include "include/screen.hpp"
 #include "ranges"
@@ -191,7 +191,7 @@ int main() {
 	// 		s = !s;
 	// 	},
 	// }));
-	
+
 	// screen.setChild(new TextBox(TextBoxArgs{
 	// 	.data {
 	// 		.margin{4},
@@ -199,7 +199,7 @@ int main() {
 	// 	},
 	// }));
 
-	// screen.setChild(TextButton(TextButtonArgs{
+	// screen.setChild(new TextButton(TextButtonArgs{
 	// 	.data{
 	// 		.shrinkWrap = Axis::vertical,
 	// 		.expand = Axis::horizontal,
@@ -211,30 +211,33 @@ int main() {
 	// 	},
 	// }));
 
-	screen.setChild(TopNav(TopNavArgs{
+	screen.setChild(new TopNav(TopNavArgs{
 		.tabs{
 			TopNavTab{
 				.name{"Tab 1"},
-				.child = Text(TextArgs{
+				.child = new Text(TextArgs{
 					.text{"Tab 1"},
 				}),
 			},
 			TopNavTab{
 				.name{"Tab 2"},
-				.child = Text(TextArgs{
+				.child = new Text(TextArgs{
 					.text{"Tab 2"},
 				}),
 			},
 			TopNavTab{
 				.name{"Tab 3 With some extra text"},
-				.child = Box(BoxArgs{
-					.data{
-						.size{50},
-					},
-					.color{0, 1, 1},
+				.child = new Align(AlignArgs{
+					.child = new Box(BoxArgs{
+						.data{
+							.size{200},
+						},
+						.color{0, 1, 1},
+					}),
 				}),
 			},
-		}}));
+		},
+	}));
 
 	screen.run();
 	return 0;

@@ -5,12 +5,17 @@
 using namespace squi;
 
 CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetContentType::invisibleWithChild), style(args.style) {
-	setChild(Box(BoxArgs{
+	setChild(new Box(BoxArgs{
 		.data{
 			.key{boxKey},
 			.transition{
 				.duration = 200ms,
 				.curve = TransitionCurves::easeInOut,
+				.animatedValues = [](std::shared_ptr<Key> key){
+					return TransitionValues{
+						&key->getAs<Box>()->color,
+					};
+				},
 			},
 		},
 		.color{Color::fromHexRGB("60CDFF")},
@@ -19,17 +24,10 @@ CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetCont
 		.onClick = [oc = args.onClick](GestureDetector *gd) {
 			if (oc) oc();
 		},
-		.child = Align(AlignArgs{
+		.child = new Align(AlignArgs{
 			.child = args.child,
 		}),
 	}));
-}
-
-void CustomButton::transitionInit() {
-	auto boxWidget = boxKey->getAs<Box>();
-	boxWidget->getTransition().only(TransitionValues{
-		&boxWidget->color,
-	});
 }
 
 void CustomButton::updateBeforeChild() {

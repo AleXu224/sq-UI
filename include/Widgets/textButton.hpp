@@ -18,7 +18,6 @@ namespace squi {
 	public:
 		explicit TextButton(const TextButtonArgs &args);
 
-		void transitionInit() override;
 		void updateBeforeChild() override;
 	};
 }// namespace squi

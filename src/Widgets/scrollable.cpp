@@ -8,13 +8,18 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 	: Widget(args.data.withTransition(TransitionArgs{
 				 .duration = 100ms,
 				 .curve = TransitionCurves::easeOut,
+				 .animatedValues = [](std::shared_ptr<Key> key){
+					return TransitionValues{
+						&key->getAs<Scrollable>()->scroll,
+					};
+				 },
 			 }),
 			 WidgetContentType::singleChild) {
 	// A scrollable that is shrink wrapped makes no sense and defeats the purpose of the whole widget
 	if (args.data.shrinkWrap != Axis::none) {
 		throw std::runtime_error("Cannot have a scrollable that is shrink wrapped!");
 	}
-	setChild(Column(ColumnArgs{
+	setChild(new Column(ColumnArgs{
 		.data{WidgetData{
 			.key{columnKey},
 			.shrinkWrap = Axis::vertical,
@@ -22,10 +27,6 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 		}},
 		.children = args.children,
 	}));
-}
-
-void Scrollable::transitionInit() {
-	getTransition().only(TransitionValues{&scroll});
 }
 
 void Scrollable::updateBeforeChild() {
@@ -41,7 +42,7 @@ void Scrollable::setScroll(const float &newScroll, bool instant) {
 		transitionCleared = true;
 	} else if (newScroll != lastScroll && transitionCleared) {
 		transition.only(TransitionValues{&scroll});
-		transition.update();
+		transition.update(getKey());
 		transitionCleared = false;
 	}
 

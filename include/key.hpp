@@ -16,7 +16,6 @@ namespace squi {
 	public:
 		template<typename T>
 		[[nodiscard]] T *getAs() const {
-
 			static_assert(std::is_base_of<Widget, T>::value, "T must be a widget");
 			if (instances.empty())
 				throw std::runtime_error("Key has not been initialized yet or has expired");
@@ -35,6 +34,14 @@ namespace squi {
 				throw std::runtime_error("Widget has more than 1 instance, can't return content");
 		};
 
+		void reset(Widget *newWidget) {
+			if (std::find(instances.begin(), instances.end(), newWidget) != instances.end())
+				throw std::runtime_error("Key has already been set to this widget");
+
+			instances.clear();
+			instances.push_back(newWidget);
+		}
+
 		void set(Widget *newWidget) {
 			if (std::find(instances.begin(), instances.end(), newWidget) != instances.end())
 				throw std::runtime_error("Key has already been set to this widget");
@@ -44,7 +51,7 @@ namespace squi {
 
 		void remove(Widget *widget) {
 			if (std::find(instances.begin(), instances.end(), widget) == instances.end())
-				throw std::runtime_error("Key has not been set to this widget");
+				return;
 
 			instances.erase(std::remove(instances.begin(), instances.end(), widget), instances.end());
 		}

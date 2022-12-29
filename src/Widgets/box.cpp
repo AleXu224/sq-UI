@@ -18,14 +18,6 @@ Box::Box(const BoxArgs &args) : Widget(args.data, WidgetContentType::singleChild
 	shouldClipContents = args.shouldClipContents;
 }
 
-void Box::transitionInit() {
-	auto &transition = getTransition();
-
-	transition.addWatch(&color);
-
-	transition.addWatch(&border);
-}
-
 void Box::updateBeforeChild() {
 	if (shouldUpdateGd) gd.update();
 }

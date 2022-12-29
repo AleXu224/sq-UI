@@ -9,6 +9,7 @@
 #include "unordered_map"
 #include "variant"
 #include "vec2.hpp"
+#include "key.hpp"
 
 namespace squi {
 	typedef std::vector<std::variant<float *, vec2 *, Margin *, Color *, Border *>> TransitionValues;
@@ -26,7 +27,7 @@ namespace squi {
 		// The duration in miliseconds that the transition will take
 		std::chrono::duration<float> &duration;
 		// The curve that will be used to calculate the transition
-		Curve &curve;
+		Curve curve;
 		// The value that the transition started from
 		float startValue{*value};
 		// The value that the transition is going to
@@ -39,7 +40,7 @@ namespace squi {
 		float progress{1};
 
 	public:
-		TransitionData(float *value, std::chrono::duration<float> &duration, Curve &curve);
+		TransitionData(float *value, std::chrono::duration<float> &duration, Curve curve);
 
 		void to(const float &newValue);
 
@@ -52,19 +53,23 @@ namespace squi {
 	struct TransitionArgs {
 		std::chrono::duration<float> duration = 0ms;
 		Curve curve{TransitionCurves::linear};
+		std::function<TransitionValues(std::shared_ptr<Key>)> animatedValues{};
 	};
 
 	class Transition {
+		bool firstUpdate = true;
 	public:
 		std::vector<TransitionData> watchList{};
 		std::chrono::duration<float> duration;
 		Curve curve;
+		std::function<TransitionValues(std::shared_ptr<Key>)> animatedValues{};
 
-		Transition() : duration(0), curve(TransitionCurves::linear) {}
+		Transition() : duration(0ms), curve(TransitionCurves::linear) {}
 		explicit Transition(const TransitionArgs &args)
-			: duration(args.duration), curve(args.curve) {}
+			: duration(args.duration), curve(args.curve), animatedValues(args.animatedValues) {
+		}
 
-		void update();
+		void update(std::shared_ptr<Key> key);
 
 		void addWatch(float *value);
 		void addWatch(vec2 *value);

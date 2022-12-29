@@ -7,7 +7,7 @@
 using namespace squi;
 
 TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
-	setChild(Box{BoxArgs{
+	setChild(new Box{BoxArgs{
 		// Force shrinkwrap to be verical at the very least in order to properly fit the text
 		.data{
 			.key{boxKey},
@@ -22,10 +22,10 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 		},
 		.shouldUpdateGestureDetector = true,
 		.shouldClipContents = true,
-		.child = Stack(StackArgs{
+		.child = new Stack(StackArgs{
 			.children = {
-				Align(AlignArgs{
-					.child = TextInput(TextInputArgs{
+				new Align(AlignArgs{
+					.child = new TextInput(TextInputArgs{
 						.data{
 							.key{textInputKey},
 							.margin{12, 12, 0, 0},
@@ -39,9 +39,9 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 						},
 					}),
 				}),
-				Align(AlignArgs{
+				new Align(AlignArgs{
 					.alignment{0, 1},
-					.child = Box(BoxArgs{
+					.child = new Box(BoxArgs{
 						.data{
 							.key{underlineKey},
 							.size{1},
@@ -49,6 +49,12 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 							.transition{
 								.duration = 200ms,
 								.curve = TransitionCurves::easeInOut,
+								.animatedValues = [](std::shared_ptr<Key> key) {
+									return TransitionValues{
+										&key->getAs<Box>()->getData().size.y,
+										&key->getAs<Box>()->color,
+									};
+								},
 							}
 						},
 						.color{Color::fromHexRGBA("#FFFFFF8B")},
@@ -56,18 +62,6 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 				}),
 			}}),
 	}});
-}
-
-void TextBox::transitionInit() {
-	boxKey->get()->getTransition().only(TransitionValues{
-		&boxKey->getAs<Box>()->color,
-	});
-
-	auto underline = underlineKey->getAs<Box>();
-	underline->getTransition().only(TransitionValues{
-		&underline->getData().size.y,
-		&underline->color,
-	});
 }
 
 void TextBox::updateBeforeChild() {

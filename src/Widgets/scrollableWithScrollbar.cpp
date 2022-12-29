@@ -3,18 +3,18 @@
 
 using namespace squi;
 ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
-	setChild(Stack(StackArgs{
+	setChild(new Stack(StackArgs{
 		.children{
-			Scrollable{ScrollableArgs{
+			new Scrollable{ScrollableArgs{
 				.data{
 					args.data
 						.withKey(scrollableKey),
 				},
 				.children{args.children},
 			}},
-			Align(AlignArgs{
+			new Align(AlignArgs{
 				.alignment{1, 0},
-				.child = ScrollBar(ScrollbarArgs{
+				.child = new ScrollBar(ScrollbarArgs{
 					.data{
 						.key{scrollbarKey},
 					},

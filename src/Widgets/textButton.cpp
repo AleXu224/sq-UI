@@ -10,22 +10,21 @@ TextButton::TextButton(const TextButtonArgs &args) : Widget(args.data, WidgetCon
 	textArgs.data.transition = TransitionArgs{
 		.duration = 200ms,
 		.curve = TransitionCurves::easeInOut,
+		.animatedValues = [](std::shared_ptr<Key> key) {
+			return TransitionValues{
+				&key->getAs<Text>()->color,
+			};
+		},
 	};
 	
-	setChild(CustomButton(CustomButtonArgs{
+	setChild(new CustomButton(CustomButtonArgs{
 		.data{
 			.padding{12, 7},
 			.shrinkWrap = Axis::both,
 		},
 		.onClick = args.onClick,
-		.child = Text(textArgs),
+		.child = new Text(textArgs),
 	}));
-}
-
-void TextButton::transitionInit() {
-	auto textWidget = textKey->getAs<Text>();
-
-	textWidget->getTransition().only(TransitionValues{&textWidget->color});
 }
 
 void TextButton::updateBeforeChild() {

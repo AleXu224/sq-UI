@@ -15,7 +15,7 @@ namespace squi {
 		bool canClose = false;
 
 		explicit Overlay(const OverlayArgs &args) : Widget(args.data, WidgetContentType::invisibleWithChild) {
-			setChild(Stack(StackArgs{
+			setChild(new Stack(StackArgs{
 				.children{args.children},
 			}));
 		}

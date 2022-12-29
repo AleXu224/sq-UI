@@ -23,6 +23,7 @@ namespace squi {
 		void setScroll(const float &newScroll, bool instant = false);
 		[[nodiscard]] const float &getScroll() const;
 
+		void transitionInit() override;
 		void updateBeforeChild() override;
 		void draw() override;
 	};

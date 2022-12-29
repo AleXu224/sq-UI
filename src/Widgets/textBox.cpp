@@ -56,7 +56,9 @@ TextBox::TextBox(const TextBoxArgs &args) : Widget(args.data, WidgetContentType:
 				}),
 			}}),
 	}});
+}
 
+void TextBox::transitionInit() {
 	boxKey->get()->getTransition().only(TransitionValues{
 		&boxKey->getAs<Box>()->color,
 	});

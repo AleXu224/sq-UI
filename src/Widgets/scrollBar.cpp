@@ -36,7 +36,9 @@ ScrollBar::ScrollBar(const ScrollbarArgs &args)
 			.shouldUpdateGestureDetector = true,
 		}),
 	}));
+}
 
+void ScrollBar::transitionInit() {
 	auto bgWidget = bgKey->getAs<Box>();
 	auto &bgTransition = bgWidget->getTransition();
 	bgTransition.clear();

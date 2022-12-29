@@ -114,6 +114,7 @@ namespace squi {
 			this->m_data.key->set(this);
 			transition = Transition(this->m_data.transition);
 			this->m_data.initializeTransition(transition);
+			transitionInit();
 			++instances;
 		}
 		explicit Widget(WidgetData data, WidgetContentType contentType = WidgetContentType::none)
@@ -121,6 +122,7 @@ namespace squi {
 			m_data.key->set(this);
 			transition = Transition(m_data.transition);
 			m_data.initializeTransition(transition);
+			transitionInit();
 			++instances;
 		}
 
@@ -139,6 +141,7 @@ namespace squi {
 			this->m_children = std::move(other.m_children);
 			this->transition = Transition(this->m_data.transition);
 			this->m_data.initializeTransition(transition);
+			transitionInit();
 			++instances;
 		};
 
@@ -199,6 +202,8 @@ namespace squi {
 		virtual void updateBeforeChild(){};
 		virtual void updateAfterChild(){};
 		virtual void draw();
+
+		virtual void transitionInit() {}
 
 		virtual ~Widget() {
 			this->m_data.key->remove(this);

@@ -23,10 +23,12 @@ CustomButton::CustomButton(CustomButtonArgs args) : Widget(args.data, WidgetCont
 			.child = args.child,
 		}),
 	}));
+}
 
+void CustomButton::transitionInit() {
 	auto boxWidget = boxKey->getAs<Box>();
 	boxWidget->getTransition().only(TransitionValues{
-		&boxWidget->color
+		&boxWidget->color,
 	});
 }
 

@@ -22,7 +22,9 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 		}},
 		.children = args.children,
 	}));
+}
 
+void Scrollable::transitionInit() {
 	getTransition().only(TransitionValues{&scroll});
 }
 

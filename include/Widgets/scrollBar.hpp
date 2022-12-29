@@ -24,6 +24,8 @@ namespace squi {
 	public:
 		explicit ScrollBar(const ScrollbarArgs &args);
 
+		void transitionInit() override;
+
 		void updateFromScrollable();
 
 		void updateBeforeChild() override;

@@ -16,7 +16,9 @@ Box::Box(const BoxArgs &args) : Widget(args.data, WidgetContentType::singleChild
 	gd.onLeave = args.onLeave;
 	if (gd.onClick || gd.onEnter || gd.onLeave) shouldUpdateGd = true;
 	shouldClipContents = args.shouldClipContents;
+}
 
+void Box::transitionInit() {
 	auto &transition = getTransition();
 
 	transition.addWatch(&color);

@@ -20,7 +20,9 @@ TextButton::TextButton(const TextButtonArgs &args) : Widget(args.data, WidgetCon
 		.onClick = args.onClick,
 		.child = Text(textArgs),
 	}));
+}
 
+void TextButton::transitionInit() {
 	auto textWidget = textKey->getAs<Text>();
 
 	textWidget->getTransition().only(TransitionValues{&textWidget->color});

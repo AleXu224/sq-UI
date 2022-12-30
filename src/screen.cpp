@@ -63,7 +63,8 @@ void Screen::run() {
 			glfwPollEvents();
 		} else {
 			isAnimationRunning = false;
-			glfwWaitEventsTimeout(1);
+			// glfwWaitEventsTimeout(1);
+			glfwWaitEvents();
 		}
 		auto pollPoint = std::chrono::high_resolution_clock::now();
 

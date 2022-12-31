@@ -1,6 +1,7 @@
 #include "../../include/Widgets/scrollBar.hpp"
 #include "../../include/Widgets/box.hpp"
 #include "../../include/Widgets/scrollable.hpp"
+#include "algorithm"
 
 using namespace squi;
 
@@ -64,6 +65,11 @@ void ScrollBar::updateFromScrollable() {
 
 	// Size
 	auto thumbSize = (scrollableSize / contentSize) * availableThumbSpace;
+	thumbSize = std::clamp(thumbSize, 10.0f, (std::max)(10.0f, availableThumbSpace));
+	if (thumbSize == availableThumbSpace)
+		shouldHide = true;
+	else
+		shouldHide = false;
 	thumb->setSize(thumb->getSize().withY(thumbSize));
 
 	// Position
@@ -105,4 +111,8 @@ void ScrollBar::updateBeforeChild() {
 	} else {
 		dragging = false;
 	}
+}
+
+void ScrollBar::draw() {
+	if (!shouldHide) Widget::draw();
 }

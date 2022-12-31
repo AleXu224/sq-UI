@@ -17,17 +17,21 @@ namespace squi {
 
 		bool dragging = false;
 		float dragScrollStart = 0;
+		bool shouldHide = false;
 
 		const Color bgColor = Color::fromHexRGBA("#FFFFFF0B");
 		const Color bgColorInactive = Color{0};
 		const Color thumbColor = Color::fromHexRGBA("#FFFFFF8B");
+
 	public:
 		explicit ScrollBar(const ScrollbarArgs &args);
 
 		void updateFromScrollable();
 
 		void updateBeforeChild() override;
+
+		void draw() override;
 	};
-}
+}// namespace squi
 
 #endif//SQ_UI_SCROLLBAR_HPP

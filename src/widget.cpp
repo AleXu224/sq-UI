@@ -84,10 +84,19 @@ const std::shared_ptr<Key> &Widget::getKey() const {
 }
 
 const vec2 &Widget::getSizeHint() const {
+	if (contentType == WidgetContentType::invisibleWithChild) {
+		if (auto child = getChild()) return child->getSizeHint();
+	}
 	return sizeHint;
 }
 
 void Widget::setSizeHint(const vec2 &s) {
+	if (contentType == WidgetContentType::invisibleWithChild) {
+		if (auto child = getChild()) {
+			child->setSizeHint(s);
+			return;
+		}
+	}
 	sizeHint = s;
 }
 

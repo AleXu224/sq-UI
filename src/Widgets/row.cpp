@@ -13,7 +13,6 @@ void Row::customUpdate() {
 		if (!child) continue;
 
 		child->setParent(this);
-		child->update();
 
 		auto childExpand = child->getExpand();
 		auto childSize = child->getLayoutSize();
@@ -21,6 +20,7 @@ void Row::customUpdate() {
 		if (childExpand == Axis::horizontal || childExpand == Axis::both) {
 			expandedChildren.push_back(child);
 		} else {
+			child->update();
 			totalChildrenWidth += childSize.x;
 		}
 		maxHeight = (std::max)(maxHeight, childSize.y);
@@ -51,7 +51,7 @@ void Row::customUpdate() {
 		auto widthHint = (getContentSize().x - spaceBetweenOffset - totalChildrenWidth) / static_cast<float>(expandedChildren.size());
 		for (auto &child: expandedChildren) {
 			child->setSizeHint({widthHint, child->getSizeHint().y});
-			child->getHintedSize();
+			child->update();
 		}
 	}
 }

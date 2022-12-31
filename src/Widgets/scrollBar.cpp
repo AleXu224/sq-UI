@@ -59,7 +59,7 @@ void ScrollBar::updateFromScrollable() {
 
 	auto scroll = scrollable->getScroll();
 	auto contentSize = scrollable->getChild()->getLayoutSize().y;
-	auto scrollableSize = scrollable->getSize().y;
+	auto scrollableSize = scrollable->getContentSize().y;
 
 	auto availableThumbSpace = bg->getContentSize().y;
 

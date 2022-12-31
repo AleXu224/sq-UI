@@ -20,11 +20,11 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 		throw std::runtime_error("Cannot have a scrollable that is shrink wrapped!");
 	}
 	setChild(new Column(ColumnArgs{
-		.data{WidgetData{
+		.data{
 			.key{columnKey},
 			.shrinkWrap = Axis::vertical,
 			.expand = Axis::horizontal,
-		}},
+		},
 		.children = args.children,
 	}));
 }
@@ -50,7 +50,7 @@ void Scrollable::setScroll(const float &newScroll, bool instant) {
 
 	const auto &child = getChild();
 	const auto childSize = child->getLayoutSize();
-	const auto scrollableSize = getSize();
+	const auto scrollableSize = getContentSize();
 	const auto maxScroll = childSize.y - scrollableSize.y;
 
 	if (childSize.y < scrollableSize.y) scroll = 0;

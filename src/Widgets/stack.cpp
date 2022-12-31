@@ -44,7 +44,7 @@ void Stack::customUpdate() {
 }
 
 void Stack::draw() {
-	auto pos = getPos() + getMargin().getTopLeft() + getPadding().getTopLeft();
+	auto pos = getPos();
 
 	auto children = getChildren();
 

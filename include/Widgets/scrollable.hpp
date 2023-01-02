@@ -7,6 +7,7 @@
 namespace squi {
 	struct ScrollableArgs {
 		WidgetData data{};
+		float spaceBetween = 0;
 		Children children{};
 	};
 

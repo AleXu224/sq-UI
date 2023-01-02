@@ -25,6 +25,7 @@ Scrollable::Scrollable(const ScrollableArgs &args)
 			.shrinkWrap = Axis::vertical,
 			.expand = Axis::horizontal,
 		},
+		.spaceBetween = args.spaceBetween,
 		.children = args.children,
 	}));
 }

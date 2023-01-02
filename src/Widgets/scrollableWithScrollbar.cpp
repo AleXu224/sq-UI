@@ -10,6 +10,7 @@ ScrollableWithScrollbar::ScrollableWithScrollbar(const ScrollableArgs &args) : W
 					args.data
 						.withKey(scrollableKey),
 				},
+				.spaceBetween = args.spaceBetween,
 				.children{args.children},
 			}},
 			new Align(AlignArgs{

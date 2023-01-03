@@ -3,9 +3,9 @@
 
 #include <utility>
 
+#include "child.hpp"
 #include "key.hpp"
 #include "margin.hpp"
-#include "child.hpp"
 #include "memory"
 #include "rect.hpp"
 #include "transition.hpp"
@@ -163,8 +163,8 @@ namespace squi {
 		virtual void setSizeHint(const vec2 &s);
 		void setChild(std::shared_ptr<Widget> c);
 		void setChild(const Child &child);
-		template <typename T>
-		void setChild(T* child) {
+		template<typename T>
+		void setChild(T *child) {
 			if (contentType != WidgetContentType::singleChild && contentType != WidgetContentType::invisibleWithChild)
 				throw std::runtime_error("Child is not of singleChild contentType");
 
@@ -193,8 +193,6 @@ namespace squi {
 			return instances;
 		}
 
-	private:
-		// Helper functions
 		void shrinkWrapWidget();
 		void expandWidget();
 	};

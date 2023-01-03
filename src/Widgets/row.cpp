@@ -8,6 +8,8 @@ void Row::customUpdate() {
 	float totalChildrenWidth = 0;
 	float maxHeight = 0;
 
+	Widget::expandWidget();
+
 	std::vector<std::shared_ptr<Widget>> expandedChildren{};
 	for (auto &child: children) {
 		if (!child) continue;
@@ -21,6 +23,7 @@ void Row::customUpdate() {
 			expandedChildren.push_back(child);
 		} else {
 			child->update();
+			childSize = child->getLayoutSize();
 			totalChildrenWidth += childSize.x;
 		}
 		maxHeight = (std::max)(maxHeight, childSize.y);
@@ -35,14 +38,6 @@ void Row::customUpdate() {
 	}
 	if (shrinkWrap == Axis::vertical || shrinkWrap == Axis::both) {
 		setSize(getSize().withY(maxHeight + getPadding().getHorizontalVectical().y));
-	}
-
-	auto expand = getExpand();
-	if (expand == Axis::horizontal || expand == Axis::both) {
-		setSize(getSize().withX(getParent()->getContentSize().x - getMargin().getHorizontalVectical().x));
-	}
-	if (expand == Axis::vertical || expand == Axis::both) {
-		setSize(getSize().withY(getParent()->getContentSize().y - getMargin().getHorizontalVectical().y));
 	}
 
 	getHintedSize();
@@ -62,7 +57,7 @@ void Row::draw() {
 	auto children = getChildren();
 	vec2 cursor{0};
 	auto rowHeight = getContentSize().y;
-	for (auto &child : children) {
+	for (auto &child: children) {
 		if (!child) continue;
 		switch (alignment) {
 			case RowAlignment::top: {

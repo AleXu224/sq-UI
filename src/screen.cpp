@@ -1,6 +1,6 @@
 // Disable the console for Release builds
 #ifdef NDEBUG
-	#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 #endif
 
 #include "../include/screen.hpp"
@@ -11,12 +11,12 @@
 #include "GLFW/glfw3.h"
 #include "GLFW/glfw3native.h"
 #include "VersionHelpers.h"
+#include "assert.h"
 #include "d2d1.h"
 #include "dwmapi.h"
 #include "dwrite_3.h"
-#include "assert.h"
-#include "iostream"
 #include "format"
+#include "iostream"
 #include "ranges"
 
 using namespace squi;
@@ -73,9 +73,9 @@ void Screen::run() {
 		BOOL bIsColorOpaque;
 		DwmGetColorizationColor(&dwAccentRGB, &bIsColorOpaque);
 		auto alpha = (dwAccentRGB >> 24) & 0xFF;
-		auto red = ((dwAccentRGB >> 16) & 0xFF) * ((float)alpha / 255.f) + (255 - alpha);
-		auto green = ((dwAccentRGB >> 8) & 0xFF) * ((float)alpha / 255.f) + (255 - alpha);
-		auto blue = (dwAccentRGB & 0xFF) * ((float)alpha / 255.f) + (255 - alpha);
+		auto red = ((dwAccentRGB >> 16) & 0xFF) * ((float) alpha / 255.f) + (255 - alpha);
+		auto green = ((dwAccentRGB >> 8) & 0xFF) * ((float) alpha / 255.f) + (255 - alpha);
+		auto blue = (dwAccentRGB & 0xFF) * ((float) alpha / 255.f) + (255 - alpha);
 		systemAccentColor = Color::fromRGB255(red, green, blue);
 
 		update();
@@ -108,7 +108,7 @@ void Screen::init_glfw() {
 		exit(1);
 	}
 
-	glfwSetCursorPosCallback(window, [](GLFWwindow *m_window, double xpos, double ypos){
+	glfwSetCursorPosCallback(window, [](GLFWwindow *m_window, double xpos, double ypos) {
 		auto dpiScale = GestureDetector::g_dpi / vec2{96};
 		GestureDetector::g_cursorPos = vec2{xpos, ypos} / dpiScale;
 	});
@@ -165,16 +165,16 @@ void Screen::init_direct2d() {
 	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown **) &textFactory);
 	//	IDWriteFontFile* pFontFile;
 	//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
-//	if (AddFontResourceA("./segoe.ttf") != 0) {
-//		printf("Success?");
-//	} else {
-//		printf("Fail :(");
-//	}
-//	if (AddFontResourceA("./segoe-semibold.ttf") != 0) {
-//		printf("Success?");
-//	} else {
-//		printf("Fail :(");
-//	}
+	//	if (AddFontResourceA("./segoe.ttf") != 0) {
+	//		printf("Success?");
+	//	} else {
+	//		printf("Fail :(");
+	//	}
+	//	if (AddFontResourceA("./segoe-semibold.ttf") != 0) {
+	//		printf("Success?");
+	//	} else {
+	//		printf("Fail :(");
+	//	}
 
 	RECT rc;
 	GetClientRect(glfwGetWin32Window(window), &rc);
@@ -191,12 +191,12 @@ void Screen::init_direct2d() {
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 
-//	IDWriteRenderingParams *textRenderingParams = nullptr;
-//	textFactory->CreateCustomRenderingParams(1, 1, 1, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE_CLEARTYPE_NATURAL, &textRenderingParams);
-//	//
-//	canvas->SetTextRenderingParams(textRenderingParams);
+	//	IDWriteRenderingParams *textRenderingParams = nullptr;
+	//	textFactory->CreateCustomRenderingParams(1, 1, 1, DWRITE_PIXEL_GEOMETRY_FLAT, DWRITE_RENDERING_MODE_CLEARTYPE_NATURAL, &textRenderingParams);
+	//	//
+	//	canvas->SetTextRenderingParams(textRenderingParams);
 
-//	textRenderingParams->Release();
+	//	textRenderingParams->Release();
 }
 
 Screen *Screen::getCurrentScreen() {
@@ -211,6 +211,41 @@ std::tuple<GLFWwindow *, ID2D1HwndRenderTarget *, ID2D1Factory *, IDWriteFactory
 	auto screen = Screen::getCurrentScreen();
 
 	return {screen->window, screen->canvas, screen->factory, screen->textFactory};
+}
+
+void printWidgetTree(Widget *widget, int depth = 0) {
+	if (!widget) return;
+
+	switch (widget->getChildCountType()) {
+		case WidgetContentType::none: {
+			for (int i = 0; i < depth; i++) printf("-");
+			auto size = widget->getSize();
+			printf("%s\n", std::format("{:.2f}x{:.2f} {}", size.x, size.y, typeid(*widget).name()).c_str());
+			break;
+		}
+		case WidgetContentType::singleChild: {
+			for (int i = 0; i < depth; i++) printf("-");
+			auto size = widget->getSize();
+			printf("%s\n", std::format("{:.2f}x{:.2f} {}", size.x, size.y, typeid(*widget).name()).c_str());
+			printWidgetTree(widget->getChild().get(), depth + 1);
+			break;
+		}
+		case WidgetContentType::multipleChildren: {
+			for (int i = 0; i < depth; i++) printf("-");
+			auto size = widget->getSize();
+			printf("%s\n", std::format("{:.2f}x{:.2f} {}", size.x, size.y, typeid(*widget).name()).c_str());
+			for (auto &child: widget->getChildren()) {
+				printWidgetTree(child.get(), depth + 1);
+			}
+			break;
+		}
+		case WidgetContentType::invisibleWithChild: {
+			for (int i = 0; i < depth; i++) printf("-");
+			printf("%s\n", typeid(*widget).name());
+			printWidgetTree(widget->getChild().get(), depth);
+			break;
+		}
+	}
 }
 
 void Screen::customUpdate() {
@@ -246,6 +281,7 @@ void Screen::customUpdate() {
 
 	child->setParent(this);
 	child->update();
+	// printWidgetTree(child.get());
 	hitcheckRects.clear();
 }
 

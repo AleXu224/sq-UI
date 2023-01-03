@@ -57,22 +57,30 @@ void Box::draw() {
 		if (shouldClipContents) {
 			if (borderRadius > 0) {
 				ID2D1RoundedRectangleGeometry *rrg = nullptr;
-				factory->CreateRoundedRectangleGeometry(D2D1::RoundedRect(getRect(), borderRadius, borderRadius), &rrg);
+				if (border.position == BorderPosition::outside) {
+					auto rr = D2D1::RoundedRect(getRect().inset(border.size), borderRadius - border.size, borderRadius - border.size);
+					factory->CreateRoundedRectangleGeometry(rr, &rrg);
+				} else {
+					factory->CreateRoundedRectangleGeometry(D2D1::RoundedRect(getRect(), borderRadius, borderRadius), &rrg);
+				}
 
 				canvas->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), rrg), nullptr);
 				rrg->Release();
 			} else {
-				canvas->PushAxisAlignedClip(getRect(), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+				if (border.position == BorderPosition::outside)
+					canvas->PushAxisAlignedClip(getRect().inset(border.size), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+				else
+					canvas->PushAxisAlignedClip(getRect(), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 			}
 		}
 		child->setPos(pos + getPadding().getTopLeft());
 		child->draw();
 		if (shouldClipContents) {
 			if (borderRadius > 0) canvas->PopLayer();
-			else canvas->PopAxisAlignedClip();
+			else
+				canvas->PopAxisAlignedClip();
 		}
 	}
-
 }
 
 const GestureDetector &Box::getGD() const {

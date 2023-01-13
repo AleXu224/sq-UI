@@ -53,7 +53,7 @@ Screen::Screen() : Widget(WidgetData{}, WidgetContentType::singleChild) {
 void Screen::run() {
 	auto lastTime = std::chrono::high_resolution_clock::now();
 
-	while (!glfwWindowShouldClose(window)) {
+	while (!glfwWindowShouldClose(window.get())) {
 		auto now = std::chrono::high_resolution_clock::now();
 		deltaTime = now - lastTime;
 		lastTime = now;
@@ -102,17 +102,19 @@ void Screen::init_glfw() {
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
-	window = glfwCreateWindow(800, 600, "te", nullptr, nullptr);
-	if (!window) {
+	GLFWwindow *windowPtr = nullptr;
+	windowPtr = glfwCreateWindow(800, 600, "te", nullptr, nullptr);
+	if (!windowPtr) {
 		printf("Failed to create window\n");
 		exit(1);
 	}
+	window.reset(windowPtr);
 
-	glfwSetCursorPosCallback(window, [](GLFWwindow *m_window, double xpos, double ypos) {
+	glfwSetCursorPosCallback(window.get(), [](GLFWwindow *m_window, double xpos, double ypos) {
 		auto dpiScale = GestureDetector::g_dpi / vec2{96};
 		GestureDetector::g_cursorPos = vec2{xpos, ypos} / dpiScale;
 	});
-	glfwSetWindowSizeCallback(window, [](GLFWwindow *m_window, int width, int height) {
+	glfwSetWindowSizeCallback(window.get(), [](GLFWwindow *m_window, int width, int height) {
 		D2D_SIZE_U newSize{
 			.width = static_cast<UINT32>(width),
 			.height = static_cast<UINT32>(height),
@@ -121,33 +123,33 @@ void Screen::init_glfw() {
 		Screen::getCurrentScreen()->update();
 		Screen::getCurrentScreen()->draw();
 	});
-	glfwSetCharCallback(window, [](GLFWwindow *m_window, unsigned int codepoint) {
+	glfwSetCharCallback(window.get(), [](GLFWwindow *m_window, unsigned int codepoint) {
 		GestureDetector::g_textInput = static_cast<unsigned char>(codepoint);
 	});
-	glfwSetScrollCallback(window, [](GLFWwindow *m_window, double xoffset, double yoffset) {
+	glfwSetScrollCallback(window.get(), [](GLFWwindow *m_window, double xoffset, double yoffset) {
 		GestureDetector::g_scrollDelta = vec2{static_cast<float>(xoffset), static_cast<float>(yoffset)};
 	});
-	glfwSetKeyCallback(window, [](GLFWwindow *m_window, int key, int scancode, int action, int mods) {
+	glfwSetKeyCallback(window.get(), [](GLFWwindow *m_window, int key, int scancode, int action, int mods) {
 		Screen::getCurrentScreen()->animationRunning();
 		if (!GestureDetector::g_keys.contains(key))
 			GestureDetector::g_keys.insert({key, {action, mods}});
 		else
 			GestureDetector::g_keys.at(key) = {action, mods};
 	});
-	glfwSetMouseButtonCallback(window, [](GLFWwindow *m_window, int button, int action, int mods) {
+	glfwSetMouseButtonCallback(window.get(), [](GLFWwindow *m_window, int button, int action, int mods) {
 		Screen::getCurrentScreen()->animationRunning();
 		if (!GestureDetector::g_keys.contains(button))
 			GestureDetector::g_keys.insert({button, {action, mods}});
 		else
 			GestureDetector::g_keys.at(button) = {action, mods};
 	});
-	glfwSetCursorEnterCallback(window, [](GLFWwindow *m_window, int entered) {
+	glfwSetCursorEnterCallback(window.get(), [](GLFWwindow *m_window, int entered) {
 		GestureDetector::g_cursorInside = static_cast<bool>(entered);
 	});
 
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(window.get());
 
-	HWND hwnd = glfwGetWin32Window(window);
+	HWND hwnd = glfwGetWin32Window(window.get());
 	int darkMode = 1;
 	int mica = 2;
 	int micaOld = 1;
@@ -161,8 +163,13 @@ void Screen::init_glfw() {
 }
 
 void Screen::init_direct2d() {
-	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
-	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown **) &textFactory);
+	ID2D1Factory *factoryPtr;
+	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factoryPtr);
+	factory.reset(factoryPtr, [](ID2D1Factory *factory) { factory->Release(); });
+
+	IDWriteFactory *textFactoryPtr;
+	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown **) &textFactoryPtr);
+	textFactory.reset(textFactoryPtr, [](IDWriteFactory *factory) { factory->Release(); });
 	//	IDWriteFontFile* pFontFile;
 	//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
 	//	if (AddFontResourceA("./segoe.ttf") != 0) {
@@ -177,17 +184,18 @@ void Screen::init_direct2d() {
 	//	}
 
 	RECT rc;
-	GetClientRect(glfwGetWin32Window(window), &rc);
-
+	GetClientRect(glfwGetWin32Window(window.get()), &rc);
+	ID2D1HwndRenderTarget *canvasPtr;
 	factory->CreateHwndRenderTarget(
 		D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)),
 		D2D1::HwndRenderTargetProperties(
-			glfwGetWin32Window(window),
+			glfwGetWin32Window(window.get()),
 			D2D1::SizeU(
 				rc.right - rc.left,
 				rc.bottom - rc.top),
 			D2D1_PRESENT_OPTIONS_NONE),
-		&canvas);
+		&canvasPtr);
+	canvas.reset(canvasPtr, [](ID2D1HwndRenderTarget *canvas) { canvas->Release(); });
 	canvas->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	canvas->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 
@@ -207,7 +215,12 @@ Color Screen::getSystemAccentColor() {
 	return systemAccentColor;
 }
 
-std::tuple<GLFWwindow *, ID2D1HwndRenderTarget *, ID2D1Factory *, IDWriteFactory *> getTools() {
+std::tuple<
+	std::shared_ptr<GLFWwindow>,
+	std::shared_ptr<ID2D1HwndRenderTarget>,
+	std::shared_ptr<ID2D1Factory>,
+	std::shared_ptr<IDWriteFactory>>
+Screen::getTools() {
 	auto screen = Screen::getCurrentScreen();
 
 	return {screen->window, screen->canvas, screen->factory, screen->textFactory};

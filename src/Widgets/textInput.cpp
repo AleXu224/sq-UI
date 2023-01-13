@@ -212,7 +212,7 @@ void TextInput::updateBeforeChild() {
 		selectStart = -1;
 	}
 	if (GestureDetector::isKeyPressedOrRepeat(GLFW_KEY_V, GLFW_MOD_CONTROL)) {
-		const char *clipboardContents = glfwGetClipboardString(Screen::getCurrentScreen()->window);
+		const char *clipboardContents = glfwGetClipboardString(Screen::getCurrentScreen()->window.get());
 		if (clipboardContents) {
 			const std::string output{clipboardContents};
 			if (selectStart != -1) removeSelectedRegion();
@@ -223,13 +223,13 @@ void TextInput::updateBeforeChild() {
 	if (GestureDetector::isKeyPressedOrRepeat(GLFW_KEY_C, GLFW_MOD_CONTROL) && selectStart != -1) {
 		int selectStartPos = (std::min)(cursorPos, selectStart);
 		int selectEndPos = (std::max)(cursorPos, selectStart);
-		glfwSetClipboardString(Screen::getCurrentScreen()->window,
+		glfwSetClipboardString(Screen::getCurrentScreen()->window.get(),
 							   value.substr(selectStartPos, selectEndPos - selectStartPos).c_str());
 	}
 	if (GestureDetector::isKeyPressedOrRepeat(GLFW_KEY_X, GLFW_MOD_CONTROL) && selectStart != -1) {
 		int selectStartPos = (std::min)(cursorPos, selectStart);
 		int selectEndPos = (std::max)(cursorPos, selectStart);
-		glfwSetClipboardString(Screen::getCurrentScreen()->window,
+		glfwSetClipboardString(Screen::getCurrentScreen()->window.get(),
 							   value.substr(selectStartPos, selectEndPos - selectStartPos).c_str());
 		removeSelectedRegion();
 	}

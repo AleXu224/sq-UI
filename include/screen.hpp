@@ -2,11 +2,11 @@
 #define SQ_UI_SCREEN_HPP
 
 #include "GLFW/glfw3.h"
-#include "d2d1.h"
-#include "dwrite.h"
-#include "widget.hpp"
 #include "Widgets/performanceOverlay.hpp"
+#include "d2d1_3.h"
+#include "dwrite.h"
 #include "overlay.hpp"
+#include "widget.hpp"
 
 namespace squi {
 	class Screen : public Widget {
@@ -26,12 +26,12 @@ namespace squi {
 		bool isAnimationRunning = false;
 
 		static Color systemAccentColor;
+
 	public:
-		GLFWwindow *window = nullptr;
-		ID2D1HwndRenderTarget *canvas = nullptr;
-		ID2D1Factory *factory = nullptr;
-//		IDWriteFactory5 *textFactory = nullptr;
-		IDWriteFactory *textFactory = nullptr;
+		std::shared_ptr<GLFWwindow> window;
+		std::shared_ptr<ID2D1HwndRenderTarget> canvas;
+		std::shared_ptr<ID2D1Factory> factory;
+		std::shared_ptr<IDWriteFactory> textFactory;
 		// Time in seconds between frames
 		std::chrono::duration<float> deltaTime = 1ms;
 		std::chrono::duration<float> pollTime = 1ms;
@@ -49,7 +49,11 @@ namespace squi {
 
 		static Color getSystemAccentColor();
 
-		static std::tuple<GLFWwindow*, ID2D1HwndRenderTarget*, ID2D1Factory*, IDWriteFactory *> getTools();
+		static std::tuple<std::shared_ptr<GLFWwindow>,
+						  std::shared_ptr<ID2D1HwndRenderTarget>,
+						  std::shared_ptr<ID2D1Factory>,
+						  std::shared_ptr<IDWriteFactory>>
+		getTools();
 	};
 }// namespace squi
 

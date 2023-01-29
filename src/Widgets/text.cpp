@@ -44,15 +44,40 @@ void Text::updateBeforeChild() {
 }
 
 void Text::draw() {
-	auto pos = getPos() + getMargin().getTopLeft();
+	const auto pos = getPos() + getMargin().getTopLeft();
+	const auto &size = getSize();
 
 	auto &canvas = Screen::getCurrentScreen()->canvas;
 
-	ID2D1SolidColorBrush *brush = nullptr;
-	canvas->CreateSolidColorBrush(color, &brush);
+	if (size != oldSize || color != oldColor || textChanged) {
+		oldSize = size;
+		oldColor = color;
+		textChanged = false;
+		ID2D1BitmapRenderTarget *cachePtr = nullptr;
+		canvas->CreateCompatibleRenderTarget(D2D1::SizeF(std::ceil(size.x), std::ceil(size.y)), &cachePtr);
+		cache.reset(cachePtr, [](ID2D1BitmapRenderTarget *p) { p->Release(); });
+		cache->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		cache->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
 
-	canvas->DrawTextLayout(pos, layout.get(), brush);
-	brush->Release();
+		cache->BeginDraw();
+
+		ID2D1SolidColorBrush *brush = nullptr;
+		cache->CreateSolidColorBrush(color, &brush);
+
+		cache->DrawTextLayout(vec2{0, 0}, layout.get(), brush);
+		brush->Release();
+
+		cache->EndDraw();
+	}
+
+
+	ID2D1Bitmap *bitmap = nullptr;
+	cache->GetBitmap(&bitmap);
+
+	const auto roundedPos = vec2{std::round(pos.x), std::round(pos.y)};
+	canvas->DrawBitmap(bitmap, Rect::fromPosSize(roundedPos, vec2{std::ceil(size.x), std::ceil(size.y)}), 1, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+
+	bitmap->Release();
 }
 void Text::setText(std::string newText) {
 	if (text == newText) return;
@@ -60,6 +85,7 @@ void Text::setText(std::string newText) {
 	IDWriteTextLayout *layoutPtr = nullptr;
 	Screen::getCurrentScreen()->textFactory->CreateTextLayout(std::wstring(text.begin(), text.end()).c_str(), text.size(), format.get(), INFINITY, 0, &layoutPtr);
 	layout.reset(layoutPtr, [](IDWriteTextLayout *p) { p->Release(); });
+	textChanged = true;
 }
 
 // Quite costly, should not be called often!

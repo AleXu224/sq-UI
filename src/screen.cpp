@@ -163,13 +163,13 @@ void Screen::init_glfw() {
 }
 
 void Screen::init_direct2d() {
-	ID2D1Factory *factoryPtr;
+	ID2D1Factory1 *factoryPtr;
 	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factoryPtr);
-	factory.reset(factoryPtr, [](ID2D1Factory *factory) { factory->Release(); });
+	factory.reset(factoryPtr, [](ID2D1Factory1 *factory) { factory->Release(); });
 
-	IDWriteFactory *textFactoryPtr;
+	IDWriteFactory1 *textFactoryPtr;
 	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(textFactory), (IUnknown **) &textFactoryPtr);
-	textFactory.reset(textFactoryPtr, [](IDWriteFactory *factory) { factory->Release(); });
+	textFactory.reset(textFactoryPtr, [](IDWriteFactory1 *factory) { factory->Release(); });
 	//	IDWriteFontFile* pFontFile;
 	//	textFactory->CreateFontFileReference(L"./segoe.tff", /* lastWriteTime*/ nullptr, &pFontFile);
 	//	if (AddFontResourceA("./segoe.ttf") != 0) {
@@ -218,7 +218,7 @@ Color Screen::getSystemAccentColor() {
 std::tuple<
 	std::shared_ptr<GLFWwindow>,
 	std::shared_ptr<ID2D1HwndRenderTarget>,
-	std::shared_ptr<ID2D1Factory>,
+	std::shared_ptr<ID2D1Factory1>,
 	std::shared_ptr<IDWriteFactory>>
 Screen::getTools() {
 	auto screen = Screen::getCurrentScreen();

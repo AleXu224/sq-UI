@@ -52,6 +52,10 @@ vec2 vec2::operator/(const float &v) const {
 	return vec2{this->x / v, this->y / v};
 }
 
+bool vec2::operator==(const vec2 &v) const {
+	return this->x == v.x && this->y == v.y;
+}
+
 vec2 &vec2::withY(const float &newY) {
 	y = newY;
 	return *this;

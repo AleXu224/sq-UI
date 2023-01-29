@@ -3,7 +3,7 @@
 
 #include "GLFW/glfw3.h"
 #include "Widgets/performanceOverlay.hpp"
-#include "d2d1_3.h"
+#include "d2d1_1.h"
 #include "dwrite.h"
 #include "overlay.hpp"
 #include "widget.hpp"
@@ -30,7 +30,7 @@ namespace squi {
 	public:
 		std::shared_ptr<GLFWwindow> window;
 		std::shared_ptr<ID2D1HwndRenderTarget> canvas;
-		std::shared_ptr<ID2D1Factory> factory;
+		std::shared_ptr<ID2D1Factory1> factory;
 		std::shared_ptr<IDWriteFactory> textFactory;
 		// Time in seconds between frames
 		std::chrono::duration<float> deltaTime = 1ms;
@@ -51,7 +51,7 @@ namespace squi {
 
 		static std::tuple<std::shared_ptr<GLFWwindow>,
 						  std::shared_ptr<ID2D1HwndRenderTarget>,
-						  std::shared_ptr<ID2D1Factory>,
+						  std::shared_ptr<ID2D1Factory1>,
 						  std::shared_ptr<IDWriteFactory>>
 		getTools();
 	};

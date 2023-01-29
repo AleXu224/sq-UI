@@ -42,6 +42,10 @@ namespace squi {
 		float maxWidth;
 		std::shared_ptr<IDWriteTextFormat> format{};
 		std::shared_ptr<IDWriteTextLayout> layout{};
+		std::shared_ptr<ID2D1BitmapRenderTarget> cache{};
+		vec2 oldSize{0, 0};
+		Color oldColor{0, 0, 0};
+		bool textChanged = false;
 
 	public:
 		Color color;
@@ -49,7 +53,7 @@ namespace squi {
 
 		void setText(std::string newText);
 
-		vec2 calculateSizeFor(const std::string& val) const;
+		vec2 calculateSizeFor(const std::string &val) const;
 
 		void updateBeforeChild() override;
 

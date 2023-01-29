@@ -30,14 +30,16 @@ namespace squi {
 		[[nodiscard]] vec2 operator/(const vec2 &v) const;
 		[[nodiscard]] vec2 operator/(const float &v) const;
 
-		vec2 &withY(const float& newY);
-		vec2 &withX(const float& newX);
+		[[nodiscard]] bool operator==(const vec2 &v) const;
 
-		[[nodiscard]] vec2 withY(const float&newY) const;
-		[[nodiscard]] vec2 withX(const float& newX) const;
+		vec2 &withY(const float &newY);
+		vec2 &withX(const float &newX);
 
-		[[nodiscard]] vec2 withYOffset(const float& yOffset) const;
-		[[nodiscard]] vec2 withXOffset(const float& xOffset) const;
+		[[nodiscard]] vec2 withY(const float &newY) const;
+	[[nodiscard]] vec2 withX(const float &newX) const;
+
+		[[nodiscard]] vec2 withYOffset(const float &yOffset) const;
+		[[nodiscard]] vec2 withXOffset(const float &xOffset) const;
 
 		operator D2D_POINT_2F() const;
 	};

@@ -26,7 +26,7 @@ void TransitionData::to(const float &newValue) {
 		startValue = targetValue;
 		targetValue = newValue;
 		progress = 1 - progress;
-		transitionStartTime = std::chrono::high_resolution_clock::now() - std::chrono::duration<float>(duration.count() * progress);
+		transitionStartTime = std::chrono::high_resolution_clock::now() - std::chrono::duration<double>(duration.count() * progress);
 	} else {
 		startValue = setValue;
 		targetValue = newValue;

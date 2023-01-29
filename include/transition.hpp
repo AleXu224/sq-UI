@@ -35,12 +35,12 @@ namespace squi {
 		// The value that the transition set the value to last time
 		// Will be used to detect if there was an outside change to the value
 		float setValue{*value};
-		std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::duration<float>> transitionStartTime = std::chrono::high_resolution_clock::now();
+		std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::duration<double>> transitionStartTime = std::chrono::high_resolution_clock::now();
 		// The progress of the transition
 		float progress{1};
 
 	public:
-		TransitionData(float *value, std::chrono::duration<double> &duration, Curve curve);
+		TransitionData(float *value, std::chrono::duration<float> &duration, Curve curve);
 
 		void to(const float &newValue);
 

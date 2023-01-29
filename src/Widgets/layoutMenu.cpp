@@ -214,11 +214,6 @@ LayoutMenuOverlay::LayoutMenuOverlay() : Overlay(OverlayArgs{.data{.passThrough 
 							.shrinkWrap = Axis::vertical,
 							.expand = Axis::horizontal,
 						},
-						.children{
-							new LayoutMenuButton(LayoutMenuButtonArgs{
-								.widget = Screen::getCurrentScreen()->getChild(),
-							}),
-						},
 					}),
 				},
 			}),

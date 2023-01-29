@@ -60,6 +60,7 @@ void Text::draw() {
 		cache->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
 
 		cache->BeginDraw();
+		cache->Clear();
 
 		ID2D1SolidColorBrush *brush = nullptr;
 		cache->CreateSolidColorBrush(color, &brush);

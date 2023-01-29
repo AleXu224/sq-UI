@@ -180,7 +180,7 @@ void LayoutMenuButton::updateBeforeChild() {
 	}
 }
 
-LayoutMenuOverlay::LayoutMenuOverlay() : Overlay(OverlayArgs{}) {
+LayoutMenuOverlay::LayoutMenuOverlay() : Overlay(OverlayArgs{.data{.passThrough = true}}) {
 	setChild(new Align(AlignArgs{
 		.alignment{1, 1},
 		.child = new Box(BoxArgs{
@@ -231,6 +231,9 @@ void LayoutMenuOverlay::updateBeforeChild() {
 		shouldDisplay = !shouldDisplay;
 		if (!shouldDisplay) {
 			contentKey->get()->setChildren(Children{});
+			setPassThrough(true);
+		} else {
+			setPassThrough(false);
 		}
 	}
 }

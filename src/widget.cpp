@@ -277,7 +277,8 @@ void Widget::draw() {// NOLINT(misc-no-recursion)
 std::vector<Rect> Widget::getHitcheckRects() const {
 	switch (contentType) {
 		case WidgetContentType::none: {
-			return {};
+			if (getData().passThrough) return {};
+			return {getRect()};
 		}
 		case WidgetContentType::invisibleWithChild: {
 			auto child = getChild();

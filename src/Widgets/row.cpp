@@ -26,11 +26,12 @@ void Row::customUpdate() {
 			childSize = child->getLayoutSize();
 			totalChildrenWidth += childSize.x;
 		}
-		maxHeight = (std::max)(maxHeight, childSize.y);
+		if (childExpand != Axis::vertical && childExpand != Axis::both)
+			maxHeight = (std::max)(maxHeight, childSize.y);
 	}
 
 	auto shrinkWrap = getShrinkWrap();
-	float spaceBetweenOffset = spaceBetween * static_cast<float>(children.size() - 1);
+	float spaceBetweenOffset = spaceBetween * static_cast<float>((std::max)(children.size(), 1llu) - 1);
 	spaceBetweenOffset = (std::max)(spaceBetweenOffset, 0.f);
 	if (shrinkWrap == Axis::horizontal || shrinkWrap == Axis::both) {
 		if (!expandedChildren.empty()) throw std::runtime_error("Can't shrinkWrap when there are expanded children");

@@ -14,3 +14,10 @@ void Align::draw() {
 	child->setPos(pos + offset);
 	child->draw();
 }
+
+std::vector<Rect> Align::getHitcheckRects() const {
+	auto &child = getChild();
+	if (!child) return {};
+
+	return child->getHitcheckRects();
+}

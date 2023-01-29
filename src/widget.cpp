@@ -279,6 +279,11 @@ std::vector<Rect> Widget::getHitcheckRects() const {
 		case WidgetContentType::none: {
 			return {};
 		}
+		case WidgetContentType::invisibleWithChild: {
+			auto child = getChild();
+			if (getData().passThrough || !child) return {};
+			return child->getHitcheckRects();
+		}
 		default: {
 			if (getData().passThrough) return {};
 			return {getRect()};

@@ -8,6 +8,7 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include "../include/color.hpp"
 #include "../include/gestureDetector.hpp"
+#include "layoutMenu.hpp"
 #include "GLFW/glfw3.h"
 #include "GLFW/glfw3native.h"
 #include "VersionHelpers.h"
@@ -47,6 +48,7 @@ Screen::Screen() : Widget(WidgetData{}, WidgetContentType::singleChild) {
 	currentScreen = this;
 	init_glfw();
 	init_direct2d();
+	overlays.push_back(std::shared_ptr<Overlay>(new LayoutMenuOverlay));
 	overlays.push_back(std::shared_ptr<Overlay>(new PerformanceOverlay));
 }
 

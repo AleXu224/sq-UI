@@ -55,6 +55,10 @@ namespace squi {
 
 			instances.erase(std::remove(instances.begin(), instances.end(), widget), instances.end());
 		}
+
+		bool isValid() const {
+			return instances.size() == 1;
+		}
 	};
 }// namespace squi
 

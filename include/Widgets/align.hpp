@@ -19,6 +19,8 @@ namespace squi {
 		}
 
 		void draw() override;
+
+		[[nodiscard]] virtual std::vector<Rect> getHitcheckRects() const override;
 	};
 }// namespace squi
 

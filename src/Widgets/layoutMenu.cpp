@@ -2,12 +2,12 @@
 #include "align.hpp"
 #include "box.hpp"
 #include "column.hpp"
+#include "random"
 #include "row.hpp"
 #include "screen.hpp"
 #include "scrollableWithScrollbar.hpp"
 #include "text.hpp"
 #include "textButton.hpp"
-#include "random"
 
 using namespace squi;
 
@@ -229,6 +229,9 @@ LayoutMenuOverlay::LayoutMenuOverlay() : Overlay(OverlayArgs{}) {
 void LayoutMenuOverlay::updateBeforeChild() {
 	if (GestureDetector::isKey(GLFW_KEY_F11, GLFW_PRESS, GLFW_MOD_SHIFT)) {
 		shouldDisplay = !shouldDisplay;
+		if (!shouldDisplay) {
+			contentKey->get()->setChildren(Children{});
+		}
 	}
 }
 

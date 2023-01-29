@@ -40,7 +40,7 @@ namespace squi {
 		float progress{1};
 
 	public:
-		TransitionData(float *value, std::chrono::duration<float> &duration, Curve curve);
+		TransitionData(float *value, std::chrono::duration<double> &duration, Curve curve);
 
 		void to(const float &newValue);
 
